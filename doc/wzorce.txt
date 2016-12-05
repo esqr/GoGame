@@ -1,0 +1,9 @@
+Zastosowane wzorce:
+
+GameServer: Singleton
+
+MovePerformer, MoveGenerator: Obserwator
+MovePerformer jest obserwowanym, a MoveGenerator obserwującym.
+AddMoveGenerator i removeMoveGenerator dodają obserwujących.
+StonePlaced, passed, scoringProposed, scoringAccepted, scoringRejected są wywoływanie przy zmianie w obiekcie obserwowanym.
+
