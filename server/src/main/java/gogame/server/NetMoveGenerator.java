@@ -1,5 +1,7 @@
 package gogame.server;
 
+import gogame.common.*;
+
 public class NetMoveGenerator implements MoveGenerator {
 
     @Override
@@ -43,12 +45,7 @@ public class NetMoveGenerator implements MoveGenerator {
     }
 
     @Override
-    public void addMoveGenerator(MoveGenerator generator) {
-
-    }
-
-    @Override
-    public void removeMoveGenerator(MoveGenerator generator) {
+    public void setMovePerformer(MovePerformer performer) {
 
     }
 }
