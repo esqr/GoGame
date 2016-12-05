@@ -16,7 +16,7 @@ public class GameServer {
     private GameServer() {}
     public void addPlayerToBoard(MoveGenerator player, Integer boardIndex) {}
     public List<Integer> getBoardsList(Filter filter) {
-        return new ArrayList<>();
+        return new ArrayList<Integer>();
     }
     public static GameServer getInstance() {
         if (instance == null) {

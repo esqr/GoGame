@@ -1,5 +1,7 @@
 package gogame.client;
 
+import gogame.common.*;
+
 public class BeautyGuiInterface implements MoveGenerator {
     @Override
     public void colorSet(Color color) {

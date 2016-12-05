@@ -1,5 +1,7 @@
 package gogame.client;
 
+import gogame.common.*;
+
 public class NetClient implements MovePerformer {
     @Override
     public void placeStone(Color color, int x, int y) {
