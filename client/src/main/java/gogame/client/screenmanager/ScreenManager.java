@@ -6,6 +6,7 @@ import javafx.scene.Parent;
 import javafx.scene.layout.StackPane;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,8 +25,8 @@ public class ScreenManager extends StackPane {
         return screens.get(name);
     }
 
-    public void loadScreen(String name, String resource) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource(resource));
+    public void loadScreen(String name, URL resource) throws IOException {
+        FXMLLoader loader = new FXMLLoader(resource);
         Parent loadScreen = loader.load();
         addScreen(name, loadScreen);
     }

@@ -25,7 +25,7 @@ public class ScreenManagerTest {
 
     @Test
     public void loadScreen() throws Exception {
-        screenManager.loadScreen(screenName, "Blank.fxml");
+        screenManager.loadScreen(screenName, getClass().getClassLoader().getResource("Blank.fxml"));
         assertNotEquals(null, screenManager.getScreen(screenName));
     }
 
