@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.BorderPane?>
+<?import gogame.client.ui.BoardCanvas?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.Pane?>
+<BorderPane xmlns="http://javafx.com/javafx/8.0.102-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gogame.client.controllers.GameScreenController">
+    <center>
+        <Pane fx:id="canvasWrapper">
+            <BoardCanvas fx:id="boardCanvas"/>
+        </Pane>
+    </center>
+    <right>
+        <VBox BorderPane.alignment="CENTER">
+            <children>
+                <Button fx:id="passButton" text="Pass" />
+                <Button fx:id="surrenderButton" text="Poddaj się" />
+            </children>
+        </VBox>
+    </right>
+</BorderPane>
