@@ -1,0 +1,12 @@
+HBox, VBox {
+    -fx-spacing: 4;
+    -fx-padding: 5;
+}
+
+#mainContainer {
+    -fx-padding: 5;
+}
+
+.placeholder {
+    -fx-opacity: 0.6;
+}

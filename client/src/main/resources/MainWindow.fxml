@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import gogame.client.screenmanager.ScreenManager?>
+<?import javafx.scene.layout.BorderPane?>
+
+<BorderPane id="mainContainer" prefHeight="600" prefWidth="800" stylesheets="default.css" xmlns="http://javafx.com/javafx/8.0.102-ea" xmlns:fx="http://javafx.com/fxml/1">
+    <center>
+        <ScreenManager fx:id="screenManager" />
+    </center>
+</BorderPane>
