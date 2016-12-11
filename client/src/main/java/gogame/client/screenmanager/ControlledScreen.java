@@ -2,4 +2,6 @@ package gogame.client.screenmanager;
 
 import javafx.fxml.Initializable;
 
-public interface ControlledScreen extends Initializable {}
+public abstract class ControlledScreen implements Initializable {
+    protected ScreenManager screenManager;
+}

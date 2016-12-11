@@ -14,7 +14,7 @@ import javafx.scene.input.MouseEvent;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class GameListScreenController implements ControlledScreen {
+public class GameListScreenController extends ControlledScreen {
     @FXML
     private ListView gameListView;
 

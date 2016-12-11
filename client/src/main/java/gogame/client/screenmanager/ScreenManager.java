@@ -28,6 +28,11 @@ public class ScreenManager extends StackPane {
     public void loadScreen(String name, URL resource) throws IOException {
         FXMLLoader loader = new FXMLLoader(resource);
         Parent loadScreen = loader.load();
+        ControlledScreen controller = loader.getController();
+        if (controller != null) {
+            controller.screenManager = this;
+        }
+
         addScreen(name, loadScreen);
     }
 
