@@ -7,11 +7,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Scanner;
 
 public class NetMoveGenerator extends Thread implements MoveGenerator {
-    Socket socket;
-    PrintWriter writer;
-    BufferedReader reader;
+    private Socket socket;
+    private PrintWriter writer;
+    private BufferedReader reader;
+    private MovePerformer performer;
 
     public NetMoveGenerator(Socket socket) {
         this.socket = socket;
@@ -31,7 +33,20 @@ public class NetMoveGenerator extends Thread implements MoveGenerator {
             String inputLine;
 
             while ((inputLine = reader.readLine()) != null) {
-                if (inputLine.equals("BYE")) {
+                Scanner scanner = new Scanner(inputLine);
+                String command = scanner.next();
+
+                if (command.equals("STONE")) {
+                    Color color = Color.valueOf(scanner.next());
+                    int x = scanner.nextInt();
+                    int y = scanner.nextInt();
+
+                    performer.placeStone(color, x, y);
+                } else if (command.equals("PASS")) {
+                    Color color = Color.valueOf(scanner.next());
+
+                    performer.pass(color);
+                } else if (command.equals("BYE")) {
                     break;
                 }
             }
@@ -50,27 +65,27 @@ public class NetMoveGenerator extends Thread implements MoveGenerator {
 
     @Override
     public void colorSet(Color color) {
-
+        writer.println("COLOR " + color.toString());
     }
 
     @Override
     public void yourTurnBegan() {
-
+        writer.println("YOUR_TURN");
     }
 
     @Override
     public void yourMoveValidated(boolean valid) {
-
+        writer.println("VALIDATED " + (valid ? "OK" : "WRONG"));
     }
 
     @Override
     public void stonePlaced(Color color, int x, int y) {
-
+        writer.println("STONE " + Integer.toString(x) + " " + Integer.toString(y));
     }
 
     @Override
     public void passed(Color color) {
-
+        writer.println("PASSED " + color.toString());
     }
 
     @Override
@@ -90,6 +105,6 @@ public class NetMoveGenerator extends Thread implements MoveGenerator {
 
     @Override
     public void setMovePerformer(MovePerformer performer) {
-
+        this.performer = performer;
     }
 }

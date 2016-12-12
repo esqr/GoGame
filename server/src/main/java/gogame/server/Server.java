@@ -10,7 +10,7 @@ public class Server {
 
         try {
             while (true) {
-                new NetMoveGenerator(serverSocket.accept());
+                new ServerDoorkeeper(serverSocket.accept());
             }
         } finally {
             serverSocket.close();
