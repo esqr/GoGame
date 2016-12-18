@@ -11,29 +11,34 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ScreenManager extends StackPane {
-    private Map<String, Node> screens = new HashMap<>();
+    private Map<String, ControlledScreen> screens = new HashMap<>();
+    private ControlledScreen currentScreen;
 
     public ScreenManager() {
         super();
     }
 
-    public void addScreen(String name, Node screen) {
+    public void addScreen(String name, ControlledScreen screen) {
         screens.put(name, screen);
     }
 
-    public Node getScreen(String name) {
+    public ControlledScreen getScreen(String name) {
         return screens.get(name);
     }
 
-    public void loadScreen(String name, URL resource) throws IOException {
+    public void loadScreen(String name, URL resource) throws IOException, NoControllerException {
         FXMLLoader loader = new FXMLLoader(resource);
         Parent loadScreen = loader.load();
         ControlledScreen controller = loader.getController();
-        if (controller != null) {
-            controller.screenManager = this;
+
+        if (controller == null) {
+            throw new NoControllerException();
         }
 
-        addScreen(name, loadScreen);
+        controller.screenManager = this;
+        controller.self = loadScreen;
+
+        addScreen(name, controller);
     }
 
     public void setScreen(String name) throws NoSuchScreenException {
@@ -45,6 +50,13 @@ public class ScreenManager extends StackPane {
             getChildren().remove(0);
         }
 
-        getChildren().add(screens.get(name));
+
+
+        currentScreen = screens.get(name);
+        getChildren().add(currentScreen.self);
+    }
+
+    public ControlledScreen getCurrentScreen() {
+        return currentScreen;
     }
 }

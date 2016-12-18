@@ -2,4 +2,5 @@
 <?import javafx.scene.layout.Pane?>
 
 
-<Pane xmlns="http://javafx.com/javafx/8.0.102-ea"/>
+<Pane fx:controller="gogame.client.controllers.BlankController" xmlns="http://javafx.com/javafx/8.0.102-ea"
+      xmlns:fx="http://javafx.com/fxml/1"/>

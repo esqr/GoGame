@@ -1,11 +1,11 @@
 package gogame.client.screenmanager;
 
-import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
 
 public class ScreenManagerTest {
     private ScreenManager screenManager = null;
@@ -18,9 +18,10 @@ public class ScreenManagerTest {
 
     @Test
     public void addGetScreen() throws Exception {
-        Node node = new Pane();
-        screenManager.addScreen(screenName, node);
-        assertEquals(node, screenManager.getScreen(screenName));
+        ControlledScreen screen = mock(ControlledScreen.class);
+
+        screenManager.addScreen(screenName, screen);
+        assertEquals(screen, screenManager.getScreen(screenName));
     }
 
     @Test
@@ -31,15 +32,10 @@ public class ScreenManagerTest {
 
     @Test
     public void setScreen() throws Exception {
-        Node node = new Pane();
-        screenManager.addScreen(screenName, node);
+        screenManager.loadScreen(screenName, getClass().getClassLoader().getResource("Blank.fxml"));
         screenManager.setScreen(screenName);
-        assertEquals(node, screenManager.getChildren().get(0));
+        assertTrue(screenManager.getChildren().get(0) instanceof Pane);
 
-        Node node2 = new Pane();
-        screenManager.addScreen("node2", node2);
-        screenManager.setScreen("node2");
-        assertEquals(node2, screenManager.getChildren().get(0));
     }
 
     @Test(expected = NoSuchScreenException.class)
