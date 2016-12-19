@@ -1,39 +1,33 @@
 package gogame.client.ui;
 
-import gogame.common.Stone;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.IntegerPropertyBase;
-import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
+import gogame.common.collections.ObservableBoard;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.util.Pair;
 
-public class BoardCanvas extends Canvas {
-    private static final int DEFAULT_BOARD_SIZE = 19;
+public class BoardView extends Canvas {
     private static final Color lineColor = Color.GRAY;
     private static final Color whitesColor = Color.WHITESMOKE;
     private static final Color blacksColor = Color.rgb(0x22, 0x22, 0x22);
     private static final double padding = 5.0;
 
-    private ObservableList<Stone> stones;
-    private Pair<Integer, Integer> blankStonePosition = null;
+    private ObservableBoard board;
+    private Pair<Integer, Integer> pointerPosition = null;
 
     private double marginV;
     private double marginH;
     private double fieldSize;
     private double stoneRadius;
-    private IntegerProperty boardSize;
 
-    public BoardCanvas() {
+    public BoardView() {
         super();
         widthProperty().addListener(event -> draw());
         heightProperty().addListener(event -> draw());
 
         onMouseExitedProperty().addListener(event -> {
-            blankStonePosition = null;
+            pointerPosition = null;
             draw();
         });
 
@@ -46,28 +40,7 @@ public class BoardCanvas extends Canvas {
     }
 
     public final int getBoardSize() {
-        return boardSize == null ? DEFAULT_BOARD_SIZE : boardSize.get();
-    }
-
-    public final void setBoardSize(int value) {
-        boardSizeProperty().set(value);
-    }
-
-    public final IntegerProperty boardSizeProperty() {
-        if (boardSize == null) {
-            boardSize = new IntegerPropertyBase() {
-                @Override
-                public Object getBean() {
-                    return BoardCanvas.this;
-                }
-
-                @Override
-                public String getName() {
-                    return "boardSize";
-                }
-            };
-        }
-        return boardSize;
+        return board == null ? 0 : board.getSize();
     }
 
     private void draw() {
@@ -106,19 +79,24 @@ public class BoardCanvas extends Canvas {
 
         gc.stroke();
 
-        if (stones != null) {
-            for (Stone stone : stones) {
-                gc.setFill(stone.getColor() == gogame.common.Color.BLACK ? blacksColor : whitesColor);
-                gc.strokeOval(marginH + stone.getPosX() * fieldSize - stoneRadius,
-                        marginV + stone.getPosY() * fieldSize - stoneRadius, stoneRadius * 2, stoneRadius * 2);
-                gc.fillOval(marginH + stone.getPosX() * fieldSize - stoneRadius,
-                        marginV + stone.getPosY() * fieldSize - stoneRadius, stoneRadius * 2, stoneRadius * 2);
+        if (board != null) {
+            for (int i = 0; i < getBoardSize(); i++) {
+                for (int j = 0; j < getBoardSize(); j++) {
+                    gogame.common.Color color = board.getStone(i, j);
+                    if (color != null) {
+                        gc.setFill(color == gogame.common.Color.BLACK ? blacksColor : whitesColor);
+                        gc.strokeOval(marginH + i * fieldSize - stoneRadius,
+                                marginV + j * fieldSize - stoneRadius, stoneRadius * 2, stoneRadius * 2);
+                        gc.fillOval(marginH + i * fieldSize - stoneRadius,
+                                marginV + j * fieldSize - stoneRadius, stoneRadius * 2, stoneRadius * 2);
+                    }
+                }
             }
         }
 
-        if (blankStonePosition != null) {
-            gc.strokeOval(marginH + blankStonePosition.getKey() * fieldSize - stoneRadius,
-                    marginV + blankStonePosition.getValue() * fieldSize - stoneRadius, stoneRadius * 2, stoneRadius * 2);
+        if (pointerPosition != null) {
+            gc.strokeOval(marginH + pointerPosition.getKey() * fieldSize - stoneRadius,
+                    marginV + pointerPosition.getValue() * fieldSize - stoneRadius, stoneRadius * 2, stoneRadius * 2);
         }
     }
 
@@ -126,17 +104,17 @@ public class BoardCanvas extends Canvas {
         double x = event.getX();
         double y = event.getY();
 
-        Pair<Integer, Integer> newBlankStonePosition = calcBlankStonePosition(x, y);
+        Pair<Integer, Integer> newPointerPosition = calcPointerPosition(x, y);
 
-        if ((newBlankStonePosition != null && !newBlankStonePosition.equals(blankStonePosition)) ||
-                (blankStonePosition != null && !blankStonePosition.equals(newBlankStonePosition))) {
-            blankStonePosition = newBlankStonePosition;
+        if ((newPointerPosition != null && !newPointerPosition.equals(pointerPosition)) ||
+                (pointerPosition != null && !pointerPosition.equals(newPointerPosition))) {
+            pointerPosition = newPointerPosition;
             draw();
         }
 
     }
 
-    private Pair<Integer, Integer> calcBlankStonePosition(double x, double y) {
+    private Pair<Integer, Integer> calcPointerPosition(double x, double y) {
         for (int i = 0; i < getBoardSize(); i++) {
             double columnPosition = marginH + i * fieldSize;
             for (int j = 0; j < getBoardSize(); j++) {
@@ -150,13 +128,10 @@ public class BoardCanvas extends Canvas {
         return null;
     }
 
-    public void setStoneList(ObservableList<Stone> stones) {
-        this.stones = stones;
-        stones.addListener(new ListChangeListener<Stone>() {
-            @Override
-            public void onChanged(Change<? extends Stone> c) {
-                draw();
-            }
+    public void setBoard(ObservableBoard board) {
+        this.board = board;
+        this.board.addObserver((o, arg) -> {
+            draw();
         });
     }
 }

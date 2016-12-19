@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.layout.BorderPane?>
-<?import gogame.client.ui.BoardCanvas?>
+<?import gogame.client.ui.BoardView?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.layout.Pane?>
 <BorderPane xmlns="http://javafx.com/javafx/8.0.102-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gogame.client.controllers.GameScreenController">
     <center>
         <Pane fx:id="canvasWrapper">
-            <BoardCanvas fx:id="boardCanvas"/>
+            <BoardView fx:id="boardView"/>
         </Pane>
     </center>
     <right>

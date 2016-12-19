@@ -1,7 +1,7 @@
 package gogame.client.controllers;
 
 import gogame.client.screenmanager.ControlledScreen;
-import gogame.client.ui.BoardCanvas;
+import gogame.client.ui.BoardView;
 import javafx.fxml.FXML;
 import javafx.scene.layout.Pane;
 
@@ -13,11 +13,11 @@ public class GameScreenController extends ControlledScreen {
     private Pane canvasWrapper;
 
     @FXML
-    private BoardCanvas boardCanvas;
+    private BoardView boardView;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        boardCanvas.heightProperty().bind(canvasWrapper.heightProperty());
-        boardCanvas.widthProperty().bind(canvasWrapper.widthProperty());
+        boardView.heightProperty().bind(canvasWrapper.heightProperty());
+        boardView.widthProperty().bind(canvasWrapper.widthProperty());
     }
 }
