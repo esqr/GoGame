@@ -45,7 +45,7 @@ public class ServerDoorkeeper extends Thread {
                     String reply = "BOARDS ";
                     List<Integer> boards = GameServer.getInstance().getBoardsList(filter);
 
-                    for(Integer board: boards) {
+                    for (Integer board : boards) {
                         reply = reply + Integer.toString(board);
                     }
 
@@ -75,4 +75,5 @@ public class ServerDoorkeeper extends Thread {
                 e.printStackTrace();
             }
         }
+    }
 }
