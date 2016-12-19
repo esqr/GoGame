@@ -19,8 +19,10 @@ public class NetClient extends Thread implements MovePerformer {
     private Socket socket;
     private MoveGenerator generator;
     private BoardListUpdater boardListUpdater;
+    private ThreadExceptionHandler exceptionHandler;
 
-    NetClient(Socket socket) throws Exception {
+    NetClient(Socket socket, ThreadExceptionHandler exceptionHandler) throws Exception {
+        this.exceptionHandler = exceptionHandler;
         in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         out = new PrintWriter(socket.getOutputStream(), true);
         this.socket = socket;
@@ -66,7 +68,7 @@ public class NetClient extends Thread implements MovePerformer {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            ClientApplication.connectionError(e, true);
+            exceptionHandler.onException(e);
         } finally {
             try {
                 in.close();
@@ -74,7 +76,7 @@ public class NetClient extends Thread implements MovePerformer {
                 socket.close();
             } catch (IOException e) {
                 e.printStackTrace();
-                ClientApplication.connectionError(e, true);
+                exceptionHandler.onException(e);
             }
         }
     }

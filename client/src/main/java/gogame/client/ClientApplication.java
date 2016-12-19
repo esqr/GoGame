@@ -26,15 +26,19 @@ public class ClientApplication extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        ThreadExceptionHandler exceptionHandler = (e) -> {
+            showError(e, true);
+        };
+
         NetClient netClient = null;
         BeautyGuiInterface generator;
 
         try {
             Socket socket = new Socket("127.0.0.1", PORT);
-            netClient = new NetClient(socket);
+            netClient = new NetClient(socket, exceptionHandler);
         } catch (Exception e) {
             e.printStackTrace();
-            ClientApplication.connectionError(e, true);
+            showError(e, true);
         }
 
         generator = new BeautyGuiInterface();
@@ -71,12 +75,12 @@ public class ClientApplication extends Application {
         primaryStage.show();
     }
 
-    public static void connectionError(Exception e, boolean exit) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Błąd połączenia");
-        alert.setHeaderText("Błąd połączenia");
-        alert.setContentText(e.getLocalizedMessage());
+    public static void showError(Exception e, boolean exit) {
         if (Platform.isFxApplicationThread()) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Błąd");
+            alert.setHeaderText("Błąd");
+            alert.setContentText(e.getLocalizedMessage());
             alert.showAndWait();
 
             if (exit) {
@@ -85,6 +89,10 @@ public class ClientApplication extends Application {
         }
 
         Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Błąd");
+            alert.setHeaderText("Błąd");
+            alert.setContentText(e.getLocalizedMessage());
             alert.showAndWait();
 
             if (exit) {
