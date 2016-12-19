@@ -1,6 +1,4 @@
-package gogame.client.misc;
-
-import gogame.common.Color;
+package gogame.common;
 
 public class Stone {
     private int posX;
