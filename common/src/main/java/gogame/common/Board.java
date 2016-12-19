@@ -1,12 +1,23 @@
 package gogame.common;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Board implements MovePerformer {
-    private Color[][] stones;
+    private List<Color[][]> history = new ArrayList<Color[][]>();
     private MoveGenerator black = null;
     private MoveGenerator white = null;
 
     public Board(int size) {
-        stones = new Color[size][size];
+        Color[][] empty = new Color[size][size];
+
+        for(int i=0;i<empty.length;++i) {
+            for (int j = 0; j < empty[0].length; j++) {
+                empty[i][j] = Color.NONE;
+            }
+        }
+
+        history.add(empty);
     }
 
     private MoveGenerator player(Color color) {
@@ -27,10 +38,27 @@ public class Board implements MovePerformer {
 
     @Override
     public void placeStone(Color color, int x, int y) {
-        stones[x][y] = color;
+        Color[][] after = new Color[history.get(0).length][history.get(0)[0].length];
+
+        for(int i=0;i<history.get(0).length;++i) {
+            for (int j=0; j<history.get(0)[0].length; j++) {
+                after[i][j] = history.get(0)[i][j];
+            }
+        }
+
+        after = BoardTransformer.transform(x, y, after);
 
         player(color).yourMoveValidated(true);
-        opponent(color).stonePlaced(color, x, y);
+        history.add(after);
+
+        for(int i=0;i<history.get(0).length;++i) {
+            for (int j=0; j<history.get(0)[0].length; j++) {
+                if (after[i][j] != history.get(0)[i][j]) {
+                    player(color).stonePlaced(color, x, y);
+                    opponent(color).stonePlaced(color, x, y);
+                }
+            }
+        }
         opponent(color).yourTurnBegan();
     }
 
