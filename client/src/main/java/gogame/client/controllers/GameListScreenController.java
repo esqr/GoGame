@@ -1,6 +1,7 @@
 package gogame.client.controllers;
 
 import gogame.client.screenmanager.ControlledScreen;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
@@ -11,8 +12,10 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class GameListScreenController extends ControlledScreen {
+    private ObservableList<Integer> boardList;
+
     @FXML
-    private ListView gameListView;
+    private ListView<Integer> gameListView;
 
     @FXML
     private TextField newGameTextField;
@@ -22,6 +25,8 @@ public class GameListScreenController extends ControlledScreen {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        gameListView.setItems(boardList);
+
         newGameTextField.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ENTER) {
                 onNewGame();
@@ -32,5 +37,9 @@ public class GameListScreenController extends ControlledScreen {
 
     private void onNewGame() {
         // todo
+    }
+
+    public void setBoardList(ObservableList<Integer> boardList) {
+        this.boardList = boardList;
     }
 }
