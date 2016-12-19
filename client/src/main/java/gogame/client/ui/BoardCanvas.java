@@ -1,6 +1,6 @@
 package gogame.client.ui;
 
-import gogame.client.misc.Stone;
+import gogame.common.Stone;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.IntegerPropertyBase;
 import javafx.collections.ListChangeListener;
@@ -120,8 +120,6 @@ public class BoardCanvas extends Canvas {
             gc.strokeOval(marginH + blankStonePosition.getKey() * fieldSize - stoneRadius,
                     marginV + blankStonePosition.getValue() * fieldSize - stoneRadius, stoneRadius * 2, stoneRadius * 2);
         }
-
-        System.out.println("woo");
     }
 
     private void redrawIfNecessary(MouseEvent event) {
