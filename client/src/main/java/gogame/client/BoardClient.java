@@ -12,6 +12,7 @@ public class BoardClient implements MovePerformer {
 
     public BoardClient(MovePerformer performer, ObservableBoard board) {
         this.performer = performer;
+        this.board = board;
     }
 
     @Override
