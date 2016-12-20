@@ -6,10 +6,16 @@ import gogame.common.*;
 public class NotSupersedesDecoratorMoveValidator extends DecoratorMoveValidator {
     @Override
     protected boolean followsRule(Color color, int x, int y, List<Color[][]> history) {
-        if (history == null || history.isEmpty() || history.get(0) == null || history.get(0)[x][y] == null || history.get(0)[x][y] == Color.NONE) {
+        Color actualColor;
+
+        try {
+            actualColor = history.get(0)[x][y];
+        } catch (NullPointerException ex) {
+            return true;
+        } catch (ArrayIndexOutOfBoundsException ex) {
             return true;
         }
 
-        return false;
+        return actualColor == Color.NONE;
     }
 }

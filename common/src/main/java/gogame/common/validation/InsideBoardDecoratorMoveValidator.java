@@ -1,5 +1,6 @@
 package gogame.common.validation;
 
+import java.io.IOException;
 import java.util.List;
 import gogame.common.*;
 
@@ -7,10 +8,22 @@ public class InsideBoardDecoratorMoveValidator extends DecoratorMoveValidator {
 
     @Override
     protected boolean followsRule(Color color, int x, int y, List<Color[][]> history) {
-        if (history == null || history.isEmpty() || history.get(0) == null || (0 <= x && x < history.get(0).length && 0 <= y && y < history.get(0)[0].length)) {
+        int width;
+        int height;
+
+        try {
+            width = history.get(history.size()-1).length;
+            height = history.get(history.size()-1)[0].length;
+        } catch (NullPointerException ex) {
+            return true;
+        } catch (ArrayIndexOutOfBoundsException ex) {
             return true;
         }
-        return false;
 
+        if (0 <= x && x < width && 0 <= y && y < height) {
+            return true;
+        }
+
+        return false;
     }
 }
