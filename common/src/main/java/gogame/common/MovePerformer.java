@@ -5,7 +5,7 @@ public interface MovePerformer {
     void pass(Color color);
     void proposeScoring(Scoring scoring);
     void acceptScoring(Scoring scoring);
-    void rejectScoring();
+    void rejectScoring(Color color);
     void addMoveGenerator(MoveGenerator generator);
     void removeMoveGenerator(MoveGenerator generator);
 }
