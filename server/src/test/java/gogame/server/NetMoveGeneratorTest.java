@@ -37,43 +37,4 @@ public class NetMoveGeneratorTest {
         NetMoveGenerator player = new NetMoveGenerator(socket);
         assertFalse(player.isAlive());
     }
-
-    @Test(timeout = 2000)
-    public void testReadError() throws Exception {
-        Socket socket = mock(Socket.class);
-        PipedOutputStream pos = new PipedOutputStream();
-        PipedInputStream is = new PipedInputStream(pos);
-        ByteArrayOutputStream os = new ByteArrayOutputStream();
-        when(socket.getOutputStream()).thenReturn(os);
-        when(socket.getInputStream()).thenReturn(is);
-
-        NetMoveGenerator player = new NetMoveGenerator(socket);
-        assertTrue(player.isAlive());
-
-        player.reader = mock(BufferedReader.class);
-        when(player.reader.readLine()).thenThrow(new IOException());
-        pos.write("\n".getBytes());
-        player.join();
-        assertFalse(player.isAlive());
-    }
-
-    @Test(timeout = 2000)
-    public void testSocketCloseError() throws Exception {
-        Socket socket = mock(Socket.class);
-        PipedOutputStream pos = new PipedOutputStream();
-        PipedInputStream is = new PipedInputStream(pos);
-        ByteArrayOutputStream os = new ByteArrayOutputStream();
-        when(socket.getOutputStream()).thenReturn(os);
-        when(socket.getInputStream()).thenReturn(is);
-
-        NetMoveGenerator player = new NetMoveGenerator(socket);
-        assertTrue(player.isAlive());
-
-        player.reader = mock(BufferedReader.class);
-        when(player.reader.readLine()).thenReturn(null);
-        doThrow(new IOException()).when(player.socket).close();
-        pos.write("\n".getBytes());
-        player.join();
-        assertFalse(player.isAlive());
-    }
 }
