@@ -10,4 +10,5 @@ public interface MoveGenerator {
     void scoringAccepted(Scoring scoring);
     void scoringRejected();
     void setMovePerformer(MovePerformer performer);
+    void opponentDisconnected();
 }

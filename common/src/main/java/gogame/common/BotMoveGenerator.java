@@ -45,4 +45,9 @@ public class BotMoveGenerator implements MoveGenerator {
     public void setMovePerformer(MovePerformer performer) {
 
     }
+
+    @Override
+    public void opponentDisconnected() {
+
+    }
 }

@@ -1,9 +1,10 @@
 package gogame.client;
 
-import gogame.client.controllers.GameListScreenController;
+import gogame.client.controllers.RoomListScreenController;
 import gogame.client.controllers.GameScreenController;
 import gogame.client.controllers.MainWindowController;
 import gogame.client.screenmanager.Screens;
+import gogame.client.statemanager.StateManager;
 import gogame.common.collections.ObservableBoard;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -27,7 +28,7 @@ public class ClientApplication extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         ThreadExceptionHandler exceptionHandler = (e) -> {
-            showError(e, true);
+            showError(e, false);
         };
 
         NetClient netClient = null;
@@ -51,23 +52,27 @@ public class ClientApplication extends Application {
         fxmlLoader.setController(controller);
         Parent root = fxmlLoader.load();
 
-        controller.setMainScreen(getClass().getClassLoader().getResource("screens/GameListScreen.fxml"));
+        controller.setMainScreen(getClass().getClassLoader().getResource("screens/RoomListScreen.fxml"));
         controller.addScreen(Screens.GAME, getClass().getClassLoader().getResource("screens/GameScreen.fxml"));
+        StateManager.INSTANCE.setState(StateManager.ClientState.ROOM_VIEW);
 
         GameScreenController gameScreenController = ((GameScreenController) controller.getScreen(Screens.GAME));
         gameScreenController.setBeautyGuiInterface(generator);
 
-        ObservableBoard board = new ObservableBoard(19);
+        ObservableBoard board = new ObservableBoard(0);
         BoardClient boardClient = new BoardClient(netClient, board);
+        netClient.setBoardClient(boardClient);
         gameScreenController.setBoard(board);
         gameScreenController.setBoardClient(boardClient);
 
-        ObservableList<Integer> boardList = FXCollections.observableArrayList();
-        ((GameListScreenController) controller.getScreen(Screens.GAME_LIST)).setBoardList(boardList);
-        BoardListUpdater boardListUpdater = new BoardListUpdater(boardList, netClient);
-        netClient.setBoardListUpdater(boardListUpdater);
-        boardListUpdater.setDaemon(true);
-        boardListUpdater.start();
+        ObservableList<RoomListElement> roomList = FXCollections.observableArrayList();
+        RoomListScreenController roomListScreenController = (RoomListScreenController) controller.getScreen(Screens.GAME_LIST);
+        roomListScreenController.setNetClient(netClient);
+        roomListScreenController.setRoomList(roomList);
+        RoomListUpdater roomListUpdater = new RoomListUpdater(roomList, netClient);
+        netClient.setRoomListUpdater(roomListUpdater);
+        roomListUpdater.setDaemon(true);
+        roomListUpdater.start();
 
 
         primaryStage.setTitle("Gra Go");

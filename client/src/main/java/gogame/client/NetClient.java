@@ -1,5 +1,6 @@
 package gogame.client;
 
+import gogame.client.statemanager.StateManager;
 import gogame.common.*;
 
 import java.io.BufferedReader;
@@ -18,8 +19,10 @@ public class NetClient extends Thread implements MovePerformer {
     private PrintWriter out;
     private Socket socket;
     private MoveGenerator generator;
-    private BoardListUpdater boardListUpdater;
+    private RoomListUpdater roomListUpdater;
     private ThreadExceptionHandler exceptionHandler;
+    private BoardClient boardClient;
+    private Color color;
 
     NetClient(Socket socket, ThreadExceptionHandler exceptionHandler) throws Exception {
         this.exceptionHandler = exceptionHandler;
@@ -27,9 +30,9 @@ public class NetClient extends Thread implements MovePerformer {
         out = new PrintWriter(socket.getOutputStream(), true);
         this.socket = socket;
 
-        out.println("HELLO");
+        out.println(CommunicationConstants.HELLO);
 
-        if (!in.readLine().equals("HELLO")) {
+        if (!in.readLine().equals(CommunicationConstants.HELLO)) {
             throw new ProtocolException("Błąd protokołu");
         }
     }
@@ -40,30 +43,86 @@ public class NetClient extends Thread implements MovePerformer {
             String line;
 
             while ((line = in.readLine()) != null) {
+                SimpleLogger.log(line);
                 Scanner scanner = new Scanner(line);
                 String command = scanner.next();
 
-                if (command.equals("STONE")) {
-                    Color color = Color.valueOf(scanner.next());
-                    int x = scanner.nextInt();
-                    int y = scanner.nextInt();
+                switch (command) {
+                    case CommunicationConstants.BOARD_LIST:
+                        List<RoomListElement> roomList = new ArrayList<>();
 
-                    generator.stonePlaced(color, x, y);
-                } else if (command.equals("PASS")) {
-                    Color color = Color.valueOf(scanner.next());
+                        try {
+                            while (true) {
+                                String boardName = scanner.next();
+                                int boardSize = scanner.nextInt();
+                                int playerNumber = scanner.nextInt();
 
-                    generator.passed(color);
-                } else if (command.equals("BYE")) {
-                    break;
-                } else if (command.equals("BOARDS")) {
-                    List<Integer> boardList = new ArrayList<>();
-                    try {
-                        while (true) {
-                            boardList.add(scanner.nextInt());
+                                roomList.add(new RoomListElement(boardName, boardSize, playerNumber));
+                            }
+                        } catch (NoSuchElementException ignored) {}
+
+                        roomListUpdater.setRoomList(roomList);
+                        break;
+
+                    case CommunicationConstants.ERROR:
+                        String error = scanner.next();
+                        try {
+                            switch (error) {
+                                case CommunicationConstants.Errors.BOARD_FULL:
+                                    throw new BoardFullException("Nie można dołączyć: pokój jest pełny");
+
+                                case CommunicationConstants.Errors.BOARD_EXISTS:
+                                    throw new BoardExistsException("Pokój o takiej nazwie istnieje");
+
+                                default:
+                                    throw new Exception("Błąd: Błąd (Błąd)"); // revolver ocelot
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            exceptionHandler.onException(e);
                         }
-                    } catch (NoSuchElementException ignored) {}
+                        break;
 
-                    boardListUpdater.setBoardList(boardList);
+                    case CommunicationConstants.JOINED:
+                        StateManager.INSTANCE.setState(StateManager.ClientState.IN_GAME);
+                        int size = scanner.nextInt();
+                        boardClient.setBoardSize(size);
+                        break;
+
+                    case CommunicationConstants.COLOR_SET:
+                        color = Color.valueOf(scanner.next());
+                        generator.colorSet(color);
+                        break;
+
+                    case CommunicationConstants.YOUR_TURN:
+                        generator.yourTurnBegan();
+                        break;
+
+                    case CommunicationConstants.MOVE_VALIDATED: {
+                        boolean valid = scanner.next().equals(CommunicationConstants.OK);
+                        generator.yourMoveValidated(valid);
+                        break;
+                    }
+
+                    case CommunicationConstants.STONE_PLACED: {
+                        Color color = Color.valueOf(scanner.next());
+                        int x = scanner.nextInt();
+                        int y = scanner.nextInt();
+                        generator.stonePlaced(color, x, y);
+                        break;
+                    }
+
+                    case CommunicationConstants.PASSED: {
+                        Color color = Color.valueOf(scanner.next());
+                        generator.passed(color);
+                        break;
+                    }
+
+                    case CommunicationConstants.OPPONENT_DISCONNECTED:
+                        ClientApplication.showError(new Exception("Przeciwnik się rozłączył"), false);
+                        requestBoardList();
+                        StateManager.INSTANCE.setState(StateManager.ClientState.ROOM_VIEW);
+                        break;
                 }
             }
         } catch (Exception e) {
@@ -82,25 +141,29 @@ public class NetClient extends Thread implements MovePerformer {
     }
 
     public void requestBoardList() {
-        out.println("GET_BOARDS " + GameServer.Filter.ALL.toString());
+        out.println(CommunicationConstants.GET_BOARDS + " " + GameServer.Filter.ALL.toString());
     }
 
     public void setGenerator(MoveGenerator generator) {
         this.generator = generator;
     }
 
-    public void setBoardListUpdater(BoardListUpdater boardListUpdater) {
-        this.boardListUpdater = boardListUpdater;
+    public void setRoomListUpdater(RoomListUpdater roomListUpdater) {
+        this.roomListUpdater = roomListUpdater;
+    }
+
+    public void newBoard(String name, int size) {
+        out.println(CommunicationConstants.NEW_BOARD + " " + name + " " + size);
     }
 
     @Override
     public void placeStone(Color color, int x, int y) {
-        out.println("STONE " + Integer.toString(x) + " " + Integer.toString(y));
+        out.println(CommunicationConstants.STONE_PLACED + " " + Integer.toString(x) + " " + Integer.toString(y));
     }
 
     @Override
     public void pass(Color color) {
-        out.println("PASS " + color.toString());
+        out.println(CommunicationConstants.PASS);
     }
 
     @Override
@@ -114,7 +177,7 @@ public class NetClient extends Thread implements MovePerformer {
     }
 
     @Override
-    public void rejectScoring() {
+    public void rejectScoring(Color color) {
 
     }
 
@@ -126,5 +189,13 @@ public class NetClient extends Thread implements MovePerformer {
     @Override
     public void removeMoveGenerator(MoveGenerator generator) {
 
+    }
+
+    public void setBoardClient(BoardClient boardClient) {
+        this.boardClient = boardClient;
+    }
+
+    public void joinBoard(RoomListElement selectedItem) {
+        out.println(CommunicationConstants.JOIN_BOARD + " " + selectedItem.getName());
     }
 }

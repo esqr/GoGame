@@ -3,6 +3,7 @@ package gogame.common.collections;
 import gogame.common.Color;
 import gogame.common.Stone;
 
+import java.util.Arrays;
 import java.util.Observable;
 
 public class ObservableBoard extends Observable {
@@ -16,6 +17,9 @@ public class ObservableBoard extends Observable {
     public void setSize(int size) {
         this.size = size;
         stones = new Color[size][size];
+        for (Color[] row : stones) {
+            Arrays.fill(row, Color.NONE);
+        }
     }
 
     public int getSize() {

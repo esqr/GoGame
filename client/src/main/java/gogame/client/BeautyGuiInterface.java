@@ -50,6 +50,11 @@ public class BeautyGuiInterface implements MoveGenerator {
 
     }
 
+    @Override
+    public void opponentDisconnected() {
+        forwardee.opponentDisconnected();
+    }
+
     public void setForwardee(MoveGenerator forwardee) {
         this.forwardee = forwardee;
     }

@@ -83,7 +83,7 @@ public class BoardView extends Canvas {
             for (int i = 0; i < getBoardSize(); i++) {
                 for (int j = 0; j < getBoardSize(); j++) {
                     gogame.common.Color color = board.getStone(i, j);
-                    if (color != null) {
+                    if (color != gogame.common.Color.NONE) {
                         gc.setFill(color == gogame.common.Color.BLACK ? blacksColor : whitesColor);
                         gc.strokeOval(marginH + i * fieldSize - stoneRadius,
                                 marginV + j * fieldSize - stoneRadius, stoneRadius * 2, stoneRadius * 2);
@@ -114,7 +114,7 @@ public class BoardView extends Canvas {
 
     }
 
-    private Pair<Integer, Integer> calcPointerPosition(double x, double y) {
+    public Pair<Integer, Integer> calcPointerPosition(double x, double y) {
         for (int i = 0; i < getBoardSize(); i++) {
             double columnPosition = marginH + i * fieldSize;
             for (int j = 0; j < getBoardSize(); j++) {

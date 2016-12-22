@@ -6,6 +6,6 @@ public interface MovePerformer {
     void proposeScoring(Scoring scoring);
     void acceptScoring(Scoring scoring);
     void rejectScoring(Color color);
-    void addMoveGenerator(MoveGenerator generator);
+    void addMoveGenerator(MoveGenerator generator) throws BoardFullException;
     void removeMoveGenerator(MoveGenerator generator);
 }

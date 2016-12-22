@@ -1,7 +1,6 @@
 package gogame.server;
 
 import gogame.common.*;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -28,49 +27,70 @@ public class ServerDoorkeeper extends Thread {
 
     @Override
     public void run() {
-        boolean socketPassed = false;
-
+        SimpleLogger.log("client connected");
         try {
             String inputLine;
 
             while ((inputLine = reader.readLine()) != null) {
+                SimpleLogger.log("recv command: ", inputLine);
                 Scanner scanner = new Scanner(inputLine);
                 String command = scanner.next();
-                if (command.equals("HELLO")) {
-                    writer.println("HELLO");
-                } else if (command.equals("GET_BOARDS")) {
+                if (command.equals(CommunicationConstants.HELLO)) {
+                    writer.println(CommunicationConstants.HELLO);
+                } else if (command.equals(CommunicationConstants.GET_BOARDS)) {
+                    StringBuilder sb = new StringBuilder();
                     String filterString = scanner.next();
                     GameServer.Filter filter = GameServer.Filter.valueOf(filterString);
 
-                    String reply = "BOARDS ";
-                    List<Integer> boards = GameServer.getInstance().getBoardsList(filter);
+                    sb.append(CommunicationConstants.BOARD_LIST);
+                    List<Room> rooms = GameServer.getInstance().getRoomList(filter);
 
-                    for (Integer board : boards) {
-                        reply = reply + Integer.toString(board);
+                    for (Room room : rooms) {
+                        sb.append(" ").append(room.getName())
+                                .append(" ").append(room.getBoard().getSize())
+                                .append(" ").append(room.getBoard().getPlayerNumber());
                     }
 
-                    writer.println(reply);
-                } else if (command.equals("JOIN_BOARD")) {
-                    int board = scanner.nextInt();
-                    MoveGenerator generator = new NetMoveGenerator(socket);
-                    socketPassed = true;
+                    writer.println(sb.toString());
+                } else if (command.equals(CommunicationConstants.JOIN_BOARD)) {
+                    String roomName = scanner.next();
+                    NetMoveGenerator generator = new NetMoveGenerator(writer, reader);
 
-                    GameServer.getInstance().addPlayerToBoard(generator, board);
+                    try {
+                        GameServer.getInstance().addPlayerToBoard(generator, roomName);
+                        writer.println(CommunicationConstants.JOINED + " " + generator.getBoard().getSize());
+                        generator.start();
+                    } catch (BoardFullException e) {
+                        writer.println(CommunicationConstants.ERROR + " " + CommunicationConstants.Errors.BOARD_FULL);
+                    }
 
-                    break;
-                } else if (inputLine.equals("BYE")) {
+                } else if (command.equals(CommunicationConstants.NEW_BOARD)) {
+                    String roomName = scanner.next();
+                    int boardSize = scanner.nextInt();
+                    try {
+                        GameServer.getInstance().newBoard(roomName, boardSize);
+                        NetMoveGenerator generator = new NetMoveGenerator(writer, reader);
+
+                        GameServer.getInstance().addPlayerToBoard(generator, roomName);
+                        writer.println(CommunicationConstants.JOINED + " " + generator.getBoard().getSize());
+                        generator.start();
+                    } catch (BoardExistsException e) {
+                        writer.println(CommunicationConstants.ERROR + " " + CommunicationConstants.Errors.BOARD_EXISTS);
+                    } catch (BoardFullException shouldNeverHappen) {
+                        shouldNeverHappen.printStackTrace();
+                    }
+                } else if (inputLine.equals(CommunicationConstants.BYE)) {
                     break;
                 }
             }
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
+            SimpleLogger.log("client disconnected");
             try {
                 reader.close();
                 writer.close();
-                if (!socketPassed) {
-                    socket.close();
-                }
+                socket.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }

@@ -17,7 +17,7 @@ public class BoardClient implements MovePerformer {
 
     @Override
     public void placeStone(Color color, int x, int y) {
-        if (board.getStone(x, y) == null) {
+        if (board.getStone(x, y) == Color.NONE) {
             performer.placeStone(color, x, y);
         }
     }
@@ -38,8 +38,8 @@ public class BoardClient implements MovePerformer {
     }
 
     @Override
-    public void rejectScoring() {
-        performer.rejectScoring();
+    public void rejectScoring(Color color) {
+        performer.rejectScoring(color);
     }
 
     @Override
@@ -50,5 +50,9 @@ public class BoardClient implements MovePerformer {
     @Override
     public void removeMoveGenerator(MoveGenerator generator) {
 
+    }
+
+    public void setBoardSize(int boardSize) {
+        board.setSize(boardSize);
     }
 }
