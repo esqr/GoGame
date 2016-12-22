@@ -4,7 +4,6 @@ import gogame.common.validation.DecoratorMoveValidatorFactory;
 import gogame.common.validation.MoveValidator;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class Board implements MovePerformer {
@@ -14,7 +13,7 @@ public class Board implements MovePerformer {
     private MoveGenerator currentPlayer = null;
     private int size;
     private Room room;
-    private MoveValidator moveValidator;
+    private MoveValidator validator = DecoratorMoveValidatorFactory.create();
 
     public Board(int size) {
         this.size = size;
@@ -25,9 +24,6 @@ public class Board implements MovePerformer {
                 empty[i][j] = Color.NONE;
             }
         }
-
-        List<String> partsNames = Arrays.asList("InsideBoard", "Ko", "Suicide");
-        moveValidator = DecoratorMoveValidatorFactory.create(partsNames);
 
         history.add(empty);
     }
@@ -51,19 +47,19 @@ public class Board implements MovePerformer {
     @Override
     public void placeStone(Color color, int x, int y) {
         if (currentPlayer == player(color)) {
-//            boolean validMove = moveValidator.isMoveValid(color, x, y, history);
-            boolean validMove = true;
+            boolean validMove = validator.isMoveValid(color, x, y, history);
 
             if (validMove) {
-                Color[][] after = new Color[history.get(0).length][history.get(0)[0].length];
-
-                for (int i = 0; i < history.get(0).length; ++i) {
-                    for (int j = 0; j < history.get(0)[0].length; j++) {
-                        after[i][j] = history.get(0)[i][j];
+                Color[][] lastState = history.get(history.size()-1);
+                Color[][] after = new Color[lastState.length][lastState[0].length];
+                for(int i = 0;i < lastState.length; ++i) {
+                    for (int j = 0; j < lastState[0].length; j++) {
+                        after[i][j] = lastState[i][j];
                     }
                 }
 
                 after = BoardTransformer.transform(x, y, after);
+
 
                 for (int i = 0; i < history.get(0).length; ++i) {
                     for (int j = 0; j < history.get(0)[0].length; j++) {
@@ -74,8 +70,7 @@ public class Board implements MovePerformer {
                     }
                 }
 
-                history.add(0, after);
-
+                history.add(after);
                 opponent(color).yourTurnBegan();
                 currentPlayer = opponent(color);
             }

@@ -1,5 +1,7 @@
 package gogame.common.validation;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import gogame.common.*;
@@ -26,5 +28,14 @@ public class DecoratorMoveValidatorFactory {
         }
 
         return result;
+    }
+
+    public static MoveValidator create() {
+        return create(Arrays.asList(
+                "InsideBoard",
+                "NotSupersedes",
+                "Ko",
+                "Suicide"
+        ));
     }
 }
