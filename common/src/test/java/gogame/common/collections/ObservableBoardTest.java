@@ -5,6 +5,8 @@ import gogame.common.Stone;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Arrays;
+
 import static org.junit.Assert.*;
 
 public class ObservableBoardTest {
@@ -29,6 +31,17 @@ public class ObservableBoardTest {
         Stone stone = new Stone(0, 1, Color.BLACK);
         board.setStone(stone.getColor(), stone.getPosX(), stone.getPosY());
         assertEquals(stone.getColor(), board.getStone(stone.getPosX(), stone.getPosY()));
+    }
+
+    @Test
+    public void testAsArray() throws Exception {
+        Color[][] expectedArray = new Color[2][2];
+        for (Color[] row : expectedArray) {
+            Arrays.fill(row, Color.NONE);
+        }
+
+        board.setSize(2);
+        assertArrayEquals(expectedArray, board.asArray());
     }
 
     @Test(expected = NegativeArraySizeException.class)
