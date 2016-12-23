@@ -106,11 +106,14 @@ public class GameScreenController extends ControlledScreen {
 
         boardView.setOnMouseClicked(event -> {
             Pair<Integer, Integer> pos = boardView.calcPointerPosition(event.getX(), event.getY());
-            boardClient.placeStone(null, pos.getKey(), pos.getValue());
+            if (pos != null) {
+                boardClient.placeStone(null, pos.getKey(), pos.getValue());
+            }
         });
 
         passButton.setOnMouseClicked(event -> {
             boardClient.pass(null);
+            setDisableMove(true);
         });
     }
 
