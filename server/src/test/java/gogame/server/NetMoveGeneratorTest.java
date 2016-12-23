@@ -1,9 +1,6 @@
 package gogame.server;
 
-import gogame.common.Board;
-import gogame.common.Color;
-import gogame.common.CommunicationConstants;
-import gogame.common.Stone;
+import gogame.common.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
@@ -248,8 +245,12 @@ public class NetMoveGeneratorTest {
 
     @Test
     public void scoringAccepted() throws Exception {
-        netMoveGenerator.scoringAccepted();
-        // todo
+        Scoring scoring = new Scoring();
+        scoring.winner = Color.BLACK;
+
+        netMoveGenerator.scoringAccepted(scoring);
+        assertEquals(CommunicationConstants.SCORING + " " + CommunicationConstants.Scoring.RESULT + " " + Color.BLACK + "\n",
+                os.toString());
     }
 
     @Test

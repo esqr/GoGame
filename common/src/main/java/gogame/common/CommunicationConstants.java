@@ -47,5 +47,6 @@ public final class CommunicationConstants {
         public static final String ACCEPT = "ACCEPT";
         public static final String ALIVE = "ALIVE";
         public static final String DEAD = "DEAD";
+        public static final String RESULT = "RESULT";
     }
 }

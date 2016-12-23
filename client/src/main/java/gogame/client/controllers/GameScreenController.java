@@ -2,6 +2,7 @@ package gogame.client.controllers;
 
 import gogame.client.BeautyGuiInterface;
 import gogame.client.BoardClient;
+import gogame.client.ClientApplication;
 import gogame.client.screenmanager.ControlledScreen;
 import gogame.client.screenmanager.NoSuchScreenException;
 import gogame.client.statemanager.IllegalStateChangeException;
@@ -35,6 +36,7 @@ public class GameScreenController extends ControlledScreen {
     private volatile boolean moved = false;
     private StateStrategy stateStrategy;
     private ObservableScoring scoring = new ObservableScoring(0);
+    private Color selfColor;
 
     @FXML
     private Pane canvasWrapper;
@@ -100,6 +102,7 @@ public class GameScreenController extends ControlledScreen {
             @Override
             public void colorSet(Color color) {
                 Platform.runLater(() -> {
+                    selfColor = color;
                     stateStrategy = new NormalState();
                     setDisableMove(true);
                     statusLabel.setText("Twój kolor: " + color);
@@ -140,11 +143,22 @@ public class GameScreenController extends ControlledScreen {
             public void passed(Color color) {}
 
             @Override
-            public void scoringAccepted() {
+            public void scoringAccepted(Scoring sc) {
                 Platform.runLater(() -> {
                     scoring.clear();
                     setDisableScoringButtons(true);
                     stateStrategy = new NormalState();
+                    if (sc.winner == selfColor) {
+                        ClientApplication.showInfo("Wygrałeś", "Gratulacje! Wygrałeś");
+                    } else {
+                        ClientApplication.showInfo("Przegrałeś", "Może następnym razem...");
+                    }
+
+                    try {
+                        StateManager.INSTANCE.setState(StateManager.ClientState.ROOM_VIEW);
+                    } catch (NoSuchScreenException | IllegalStateChangeException e) {
+                        e.printStackTrace();
+                    }
                 });
             }
 

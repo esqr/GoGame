@@ -141,6 +141,11 @@ public class NetClient extends Thread implements MovePerformer {
                         } else if (proposed.equals(CommunicationConstants.Scoring.REJECTED)) {
                             generator.scoringRejected();
                             break;
+                        } else if (proposed.equals(CommunicationConstants.Scoring.RESULT)) {
+                            Scoring scoring = new Scoring();
+                            scoring.winner = Color.valueOf(scanner.next());
+                            generator.scoringAccepted(scoring);
+                            break;
                         }
 
                         List<Stone> proposedScoring = new ArrayList<>();

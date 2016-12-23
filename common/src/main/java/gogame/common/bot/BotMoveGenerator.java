@@ -73,7 +73,7 @@ public class BotMoveGenerator implements MoveGenerator {
     }
 
     @Override
-    public void scoringAccepted() {
+    public void scoringAccepted(Scoring scoring) {
 
     }
 

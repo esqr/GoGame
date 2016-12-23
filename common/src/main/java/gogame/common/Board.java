@@ -114,8 +114,20 @@ public class Board implements MovePerformer {
         if (scoringMode) {
             if (scoringAccepted == opponent(color)) {
                 // both players accepted scoring
-                black.scoringAccepted();
-                white.scoringAccepted();
+                // calculate score
+                Scoring tmp = ScoreCalculator.calculate(scoring);
+                if (tmp != null) {
+                    scoring = tmp;
+                } else {
+                    scoring.winner = Color.NONE;
+                }
+
+                black.scoringAccepted(scoring);
+                white.scoringAccepted(scoring);
+
+                GameServer.getInstance().removeRoom(room);
+                white = null;
+                black = null;
             } else {
                 scoringAccepted = player(color);
             }

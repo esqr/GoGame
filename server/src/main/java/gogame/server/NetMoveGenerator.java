@@ -111,8 +111,9 @@ public class NetMoveGenerator implements MoveGenerator {
     }
 
     @Override
-    public void scoringAccepted() {
-        // todo
+    public void scoringAccepted(Scoring scoring) {
+        writer.println(CommunicationConstants.SCORING + " " + CommunicationConstants.Scoring.RESULT + " " + scoring.winner.toString());
+        running = false;
     }
 
     @Override

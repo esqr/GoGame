@@ -92,7 +92,7 @@ public class BotMoveGeneratorTest {
     public void testIgnored() throws Exception {
         generator.stonePlaced(null, 0, 0);
         generator.passed(null);
-        generator.scoringAccepted();
+        generator.scoringAccepted(null);
         generator.scoringRejected();
         generator.opponentDisconnected();
         generator.opponentSurrendered();

@@ -33,8 +33,8 @@ public class BeautyGuiInterface implements MoveGenerator {
     }
 
     @Override
-    public void scoringAccepted() {
-        forwardee.scoringAccepted();
+    public void scoringAccepted(Scoring scoring) {
+        forwardee.scoringAccepted(scoring);
     }
 
     @Override
