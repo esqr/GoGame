@@ -1,5 +1,7 @@
 package gogame.client.controllers;
 
+import gogame.client.ClientApplication;
+import gogame.client.InvalidBoardSizeException;
 import gogame.client.NetClient;
 import gogame.client.RoomListElement;
 import gogame.client.screenmanager.ControlledScreen;
@@ -28,6 +30,9 @@ public class RoomListScreenController extends ControlledScreen {
     private TextField newGameTextField;
 
     @FXML
+    private TextField boardSizeTextField;
+
+    @FXML
     private Button newGameButton;
 
     @FXML
@@ -54,6 +59,12 @@ public class RoomListScreenController extends ControlledScreen {
             }
         });
 
+        boardSizeTextField.textProperty().addListener(((observable, oldValue, newValue) -> {
+            if (!newValue.matches("\\d*")) {
+                boardSizeTextField.setText(newValue.replaceAll("[^\\d]", ""));
+            }
+        }));
+
         newGameButton.setOnMouseClicked(event -> onNewGame());
 
         roomTableView.setOnMouseClicked(event -> {
@@ -63,13 +74,23 @@ public class RoomListScreenController extends ControlledScreen {
         });
 
         playWithBotButton.setOnMouseClicked(event -> {
-            netClient.playWithBot(19);
+            try {
+                int boardSize = getBoardSize();
+                netClient.playWithBot(boardSize);
+            } catch (InvalidBoardSizeException e) {
+                ClientApplication.showError(e, false);
+            }
         });
     }
 
     private void onNewGame() {
         if (!newGameTextField.getText().isEmpty()) {
-            netClient.newBoard(newGameTextField.getText(), 19);
+            try {
+                int boardSize = getBoardSize();
+                netClient.newBoard(newGameTextField.getText(), boardSize);
+            } catch (InvalidBoardSizeException e) {
+                ClientApplication.showError(e, false);
+            }
         }
     }
 
@@ -80,5 +101,24 @@ public class RoomListScreenController extends ControlledScreen {
 
     public void setNetClient(NetClient netClient) {
         this.netClient = netClient;
+    }
+
+    private int getBoardSize() throws InvalidBoardSizeException {
+        if (boardSizeTextField.getText().isEmpty()) {
+            return 19; // default board size
+        }
+
+        int boardSize = 0;
+
+        try {
+            boardSize = Integer.parseInt(boardSizeTextField.getText());
+        } catch (Exception ignored) {}
+
+        // minimum board size (3x3)
+        if (boardSize > 2) {
+            return boardSize;
+        }
+
+        throw new InvalidBoardSizeException("Zły rozmiar planszy");
     }
 }

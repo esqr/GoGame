@@ -74,6 +74,9 @@ public class NetClient extends Thread implements MovePerformer {
                                 case CommunicationConstants.Errors.BOARD_EXISTS:
                                     throw new BoardExistsException("Pokój o takiej nazwie istnieje");
 
+                                case CommunicationConstants.Errors.BOARD_SIZE:
+                                    throw new InvalidBoardSizeException("Zły rozmiar planszy");
+
                                 default:
                                     throw new Exception("Błąd: Błąd (Błąd)"); // revolver ocelot
                             }

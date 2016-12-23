@@ -29,5 +29,6 @@ public final class CommunicationConstants {
 
         public static final String BOARD_EXISTS = "BOARD_EXISTS";
         public static final String BOARD_FULL = "BOARD_FULL";
+        public static final String BOARD_SIZE = "BOARD_SIZE";
     }
 }

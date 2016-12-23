@@ -69,6 +69,12 @@ public class ServerDoorkeeper extends Thread {
                 } else if (command.equals(CommunicationConstants.NEW_BOARD)) {
                     String roomName = scanner.next();
                     int boardSize = scanner.nextInt();
+
+                    if (boardSize < 3) {
+                        writer.println(CommunicationConstants.ERROR + " " + CommunicationConstants.Errors.BOARD_SIZE);
+                        continue;
+                    }
+
                     try {
                         GameServer.getInstance().newBoard(roomName, boardSize);
                         NetMoveGenerator generator = new NetMoveGenerator(writer, reader);
@@ -83,6 +89,12 @@ public class ServerDoorkeeper extends Thread {
                     }
                 } else if (command.equals(CommunicationConstants.PLAY_WITH_BOT)) {
                     int boardSize = scanner.nextInt();
+
+                    if (boardSize < 3) {
+                        writer.println(CommunicationConstants.ERROR + " " + CommunicationConstants.Errors.BOARD_SIZE);
+                        continue;
+                    }
+
                     String roomName = "bot-" + getId();
 
                     try {

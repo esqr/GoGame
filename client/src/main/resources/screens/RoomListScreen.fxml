@@ -28,6 +28,7 @@
       <VBox BorderPane.alignment="CENTER">
          <children>
             <TextField fx:id="newGameTextField" promptText="nazwa gry"/>
+            <TextField fx:id="boardSizeTextField" promptText="wielkość planszy (19)"/>
             <Button fx:id="newGameButton" text="Utwórz grę" />
             <Button fx:id="playWithBotButton" text="Zagraj z botem" />
          </children>
