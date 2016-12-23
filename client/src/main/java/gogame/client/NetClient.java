@@ -175,6 +175,8 @@ public class NetClient extends Thread implements MovePerformer {
                 exceptionHandler.onException(e);
             }
         }
+
+        ClientApplication.showError(new Exception("Serwer zamknął połączenie"), true);
     }
 
     public void requestBoardList() {
