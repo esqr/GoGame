@@ -91,18 +91,18 @@ public class ClientApplication extends Application {
             if (exit) {
                 System.exit(1);
             }
+        } else {
+            Platform.runLater(() -> {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Błąd");
+                alert.setHeaderText("Błąd");
+                alert.setContentText(e.getLocalizedMessage());
+                alert.showAndWait();
+
+                if (exit) {
+                    System.exit(1);
+                }
+            });
         }
-
-        Platform.runLater(() -> {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Błąd");
-            alert.setHeaderText("Błąd");
-            alert.setContentText(e.getLocalizedMessage());
-            alert.showAndWait();
-
-            if (exit) {
-                System.exit(1);
-            }
-        });
     }
 }
