@@ -24,6 +24,7 @@ public class GameScreenController extends ControlledScreen {
     private MoveGenerator forwardee;
     private BoardClient boardClient;
     private ObservableBoard board;
+    private volatile boolean moved = false;
 
     @FXML
     private Pane canvasWrapper;
@@ -52,6 +53,7 @@ public class GameScreenController extends ControlledScreen {
             @Override
             public void yourTurnBegan() {
                 Platform.runLater(() -> {
+                    moved = false;
                     setDisableMove(false);
                     statusLabel.setText("Twoja tura");
                 });
@@ -60,11 +62,13 @@ public class GameScreenController extends ControlledScreen {
             @Override
             public void yourMoveValidated(boolean valid) {
                 Platform.runLater(() -> {
-                    if (valid) {
-                        statusLabel.setText("Ruch przeciwnika");
-                        setDisableMove(true);
-                    } else {
-                        statusLabel.setText("Nieprawidłowy ruch");
+                    if (moved) {
+                        if (valid) {
+                            statusLabel.setText("Ruch przeciwnika");
+                            setDisableMove(true);
+                        } else {
+                            statusLabel.setText("Nieprawidłowy ruch");
+                        }
                     }
                 });
             }
@@ -107,12 +111,14 @@ public class GameScreenController extends ControlledScreen {
         boardView.setOnMouseClicked(event -> {
             Pair<Integer, Integer> pos = boardView.calcPointerPosition(event.getX(), event.getY());
             if (pos != null) {
+                moved = true;
                 boardClient.placeStone(null, pos.getKey(), pos.getValue());
             }
         });
 
         passButton.setOnMouseClicked(event -> {
             boardClient.pass(null);
+            moved = true;
             setDisableMove(true);
         });
     }
