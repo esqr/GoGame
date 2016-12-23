@@ -3,6 +3,9 @@ package gogame.client.controllers;
 import gogame.client.BeautyGuiInterface;
 import gogame.client.BoardClient;
 import gogame.client.screenmanager.ControlledScreen;
+import gogame.client.screenmanager.NoSuchScreenException;
+import gogame.client.statemanager.IllegalStateChangeException;
+import gogame.client.statemanager.StateManager;
 import gogame.client.ui.BoardView;
 import gogame.common.Color;
 import gogame.common.MoveGenerator;
@@ -38,6 +41,9 @@ public class GameScreenController extends ControlledScreen {
     @FXML
     private Button passButton;
 
+    @FXML
+    private Button surrenderButton;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         boardView.heightProperty().bind(canvasWrapper.heightProperty());
@@ -46,8 +52,10 @@ public class GameScreenController extends ControlledScreen {
         forwardee = new MoveGenerator() {
             @Override
             public void colorSet(Color color) {
-                setDisableMove(true);
-                statusLabel.setText("Twój kolor: "+ color);
+                Platform.runLater(() -> {
+                    setDisableMove(true);
+                    statusLabel.setText("Twój kolor: " + color);
+                });
             }
 
             @Override
@@ -103,6 +111,9 @@ public class GameScreenController extends ControlledScreen {
 
             @Override
             public void opponentDisconnected() {}
+
+            @Override
+            public void opponentSurrendered() {}
         };
 
         // actually all Color parameters can be null (at client side)
@@ -120,6 +131,15 @@ public class GameScreenController extends ControlledScreen {
             boardClient.pass(null);
             moved = true;
             setDisableMove(true);
+        });
+
+        surrenderButton.setOnMouseClicked(event -> {
+            boardClient.surrender(null);
+            try {
+                StateManager.INSTANCE.setState(StateManager.ClientState.ROOM_VIEW);
+            } catch (NoSuchScreenException | IllegalStateChangeException e) {
+                e.printStackTrace();
+            }
         });
     }
 

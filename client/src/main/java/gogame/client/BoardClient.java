@@ -52,6 +52,11 @@ public class BoardClient implements MovePerformer {
 
     }
 
+    @Override
+    public void surrender(Color color) {
+        performer.surrender(color);
+    }
+
     public void setBoardSize(int boardSize) {
         board.setSize(boardSize);
     }

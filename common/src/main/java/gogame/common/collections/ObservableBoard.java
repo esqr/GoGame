@@ -20,6 +20,9 @@ public class ObservableBoard extends Observable {
         for (Color[] row : stones) {
             Arrays.fill(row, Color.NONE);
         }
+
+        setChanged();
+        notifyObservers();
     }
 
     public int getSize() {

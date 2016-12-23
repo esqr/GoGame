@@ -8,4 +8,5 @@ public interface MovePerformer {
     void rejectScoring(Color color);
     void addMoveGenerator(MoveGenerator generator) throws BoardFullException;
     void removeMoveGenerator(MoveGenerator generator);
+    void surrender(Color color);
 }

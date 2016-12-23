@@ -17,6 +17,7 @@
         <VBox BorderPane.alignment="CENTER">
             <children>
                 <Button fx:id="passButton" text="Pass" />
+                <Button fx:id="surrenderButton" text="Poddaj się" />
             </children>
         </VBox>
     </right>

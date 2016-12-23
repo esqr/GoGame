@@ -126,6 +126,12 @@ public class NetClient extends Thread implements MovePerformer {
                         requestBoardList();
                         StateManager.INSTANCE.setState(StateManager.ClientState.ROOM_VIEW);
                         break;
+
+                    case CommunicationConstants.OPPONENT_SURRENDERED:
+                        ClientApplication.showInfo("Wygrałeś", "Przeciwnik się poddał");
+                        requestBoardList();
+                        StateManager.INSTANCE.setState(StateManager.ClientState.ROOM_VIEW);
+                        break;
                 }
             }
         } catch (Exception e) {
@@ -196,6 +202,11 @@ public class NetClient extends Thread implements MovePerformer {
     @Override
     public void removeMoveGenerator(MoveGenerator generator) {
 
+    }
+
+    @Override
+    public void surrender(Color color) {
+        out.println(CommunicationConstants.SURRENDER);
     }
 
     public void setBoardClient(BoardClient boardClient) {

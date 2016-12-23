@@ -38,13 +38,20 @@ public class NetMoveGenerator implements MoveGenerator {
                     performer.pass(color);
                 } else if (command.equals(CommunicationConstants.BYE)) {
                     break;
+                } else if (command.equals(CommunicationConstants.SURRENDER)) {
+                    running = false;
+                    performer.surrender(color);
+                    break;
                 }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        performer.clientDisconnected(color);
+        if (running) {
+            performer.clientDisconnected(color);
+        }
+
         SimpleLogger.log("game ended; color: ", color);
     }
 
@@ -97,6 +104,12 @@ public class NetMoveGenerator implements MoveGenerator {
     @Override
     public void opponentDisconnected() {
         writer.println(CommunicationConstants.OPPONENT_DISCONNECTED);
+        running = false;
+    }
+
+    @Override
+    public void opponentSurrendered() {
+        writer.println(CommunicationConstants.OPPONENT_SURRENDERED);
         running = false;
     }
 

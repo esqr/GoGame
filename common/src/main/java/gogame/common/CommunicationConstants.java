@@ -5,6 +5,7 @@ public final class CommunicationConstants {
     private CommunicationConstants() {}
 
     public static final String HELLO = "HELLO";
+
     public static final String BYE = "BYE";
     public static final String GET_BOARDS = "GET_BOARDS";
     public static final String JOIN_BOARD = "JOIN_BOARD";
@@ -21,6 +22,8 @@ public final class CommunicationConstants {
     public static final String STONE_PLACED = "STONE";
     public static final String PASSED = PASS;
     public static final String OPPONENT_DISCONNECTED = "OPPONENT_DISCONNECTED";
+    public static final String OPPONENT_SURRENDERED = "OPPONENT_SURRENDERED";
+    public static final String SURRENDER = "SURRENDER";
     public static final String PLAY_WITH_BOT = "PLAY_WITH_BOT";
 
     public final class Errors {

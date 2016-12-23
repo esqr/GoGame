@@ -131,6 +131,23 @@ public class Board implements MovePerformer {
 
     }
 
+    @Override
+    public void surrender(Color color) {
+        if (color == Color.BLACK) {
+            black = null;
+        } else {
+            white = null;
+        }
+
+        MoveGenerator moveGenerator = opponent(color);
+
+        if (moveGenerator != null) {
+            moveGenerator.opponentSurrendered();
+        }
+
+        GameServer.getInstance().removeRoom(room);
+    }
+
     public int getSize() {
         return size;
     }

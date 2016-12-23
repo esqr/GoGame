@@ -105,4 +105,22 @@ public class ClientApplication extends Application {
             });
         }
     }
+
+    public static void showInfo(String title, String content) {
+        if (Platform.isFxApplicationThread()) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle(title);
+            alert.setHeaderText(title);
+            alert.setContentText(content);
+            alert.showAndWait();
+        } else {
+            Platform.runLater(() -> {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle(title);
+                alert.setHeaderText(title);
+                alert.setContentText(content);
+                alert.showAndWait();
+            });
+        }
+    }
 }

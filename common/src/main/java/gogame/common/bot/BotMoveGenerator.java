@@ -101,6 +101,11 @@ public class BotMoveGenerator implements MoveGenerator {
 
     }
 
+    @Override
+    public void opponentSurrendered() {
+
+    }
+
     public void setHistory(List<Color[][]> history) {
         this.history = history;
     }
