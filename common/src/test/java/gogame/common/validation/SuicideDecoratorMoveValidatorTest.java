@@ -25,7 +25,7 @@ public class SuicideDecoratorMoveValidatorTest {
     public void testFirstMove() throws Exception {
         history.add(fromString(
                 "     |" +
-                "    W|" +
+                "     |" +
                 "     |" +
                 "     |" +
                 "     |"
@@ -40,7 +40,7 @@ public class SuicideDecoratorMoveValidatorTest {
     public void testValidMove() throws Exception {
         history.add(fromString(
                 "   B |" +
-                "   BW|" +
+                "    W|" +
                 "   W |" +
                 "     |" +
                 "     |"
@@ -55,7 +55,7 @@ public class SuicideDecoratorMoveValidatorTest {
     public void testValidMoveWithoutLiberty() throws Exception {
         history.add(fromString(
                 " BBW |" +
-                "  WWW|" +
+                "  W W|" +
                 "  BWB|" +
                 "     |" +
                 "     |"
@@ -70,7 +70,7 @@ public class SuicideDecoratorMoveValidatorTest {
     public void testBetweenSameColor() throws Exception {
         history.add(fromString(
                 "   BW|" +
-                "   WW|" +
+                "   W |" +
                 "  BWW|" +
                 "     |" +
                 "     |"
@@ -85,7 +85,7 @@ public class SuicideDecoratorMoveValidatorTest {
     public void testIntoEye() throws Exception {
         history.add(fromString(
                 "   W |" +
-                "  WBW|" +
+                "  W W|" +
                 "  WWW|" +
                 "     |" +
                 "     |"
@@ -100,7 +100,7 @@ public class SuicideDecoratorMoveValidatorTest {
     public void testEdgeEye() throws Exception {
         history.add(fromString(
                 "   BB|" +
-                "  BBW|" +
+                "  BB |" +
                 "    B|" +
                 "     |" +
                 "     |"
@@ -115,7 +115,7 @@ public class SuicideDecoratorMoveValidatorTest {
     public void testMurderSuicide() throws Exception {
         history.add(fromString(
                 " WWWW|" +
-                " WBBW|" +
+                " WB W|" +
                 " WBW |" +
                 "  W  |" +
                 "     |"

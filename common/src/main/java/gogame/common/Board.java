@@ -58,12 +58,12 @@ public class Board implements MovePerformer {
                     }
                 }
 
+                after[x][y] = color;
                 after = BoardTransformer.transform(x, y, after);
 
-
-                for (int i = 0; i < history.get(0).length; ++i) {
-                    for (int j = 0; j < history.get(0)[0].length; j++) {
-                        if (after[i][j] != history.get(0)[i][j]) {
+                for (int i = 0; i < lastState.length; ++i) {
+                    for (int j = 0; j < lastState[0].length; j++) {
+                        if (after[i][j] != lastState[i][j]) {
                             player(color).stonePlaced(color, x, y);
                             opponent(color).stonePlaced(color, x, y);
                         }

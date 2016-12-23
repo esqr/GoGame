@@ -25,7 +25,7 @@ public class KoDecoratorMoveValidatorTest {
     public void testFirstMove() throws Exception {
         history.add(fromString(
                 "     |" +
-                "    W|" +
+                "     |" +
                 "     |" +
                 "     |" +
                 "     |"
@@ -39,14 +39,14 @@ public class KoDecoratorMoveValidatorTest {
     @Test
     public void testSecondMove() throws Exception {
         history.add(fromString(
-                "   B |" +
+                "     |" +
                 "     |" +
                 "     |" +
                 "     |" +
                 "     |"
         ));
         history.add(fromString(
-                "   B |" +
+                "     |" +
                 "    W|" +
                 "     |" +
                 "     |" +
@@ -61,6 +61,13 @@ public class KoDecoratorMoveValidatorTest {
     @Test
     public void testValidMove() throws Exception {
         history.add(fromString(
+                "     |" +
+                "     |" +
+                "     |" +
+                "     |" +
+                "     |"
+        ));
+        history.add(fromString(
                 "    B|" +
                 "     |" +
                 "     |" +
@@ -88,15 +95,8 @@ public class KoDecoratorMoveValidatorTest {
                 "     |" +
                 "     |"
         ));
-        history.add(fromString(
-                "    B|" +
-                "   BW|" +
-                "   WB|" +
-                "     |" +
-                "     |"
-        ));
 
-        boolean result = validator.followsRule(Color.WHITE, 2, 4, history);
+        boolean result = validator.followsRule(Color.BLACK, 2, 4, history);
 
         assertEquals(true, result);
     }
@@ -104,6 +104,13 @@ public class KoDecoratorMoveValidatorTest {
     @Test
     public void testValidMove2() throws Exception {
         history.add(fromString(
+                "     |" +
+                "     |" +
+                "     |" +
+                "     |" +
+                "     |"
+        ));
+        history.add(fromString(
                 "    B|" +
                 "     |" +
                 "     |" +
@@ -112,30 +119,23 @@ public class KoDecoratorMoveValidatorTest {
         ));
         history.add(fromString(
                 "    B|" +
+                "     |" +
+                "     |" +
                 "    W|" +
-                "     |" +
-                "     |" +
                 "     |"
         ));
         history.add(fromString(
                 "    B|" +
-                "   BW|" +
+                "   B |" +
                 "     |" +
-                "     |" +
+                "    W|" +
                 "     |"
         ));
         history.add(fromString(
                 "    B|" +
-                "   BW|" +
+                "   B |" +
                 "   W |" +
-                "     |" +
-                "     |"
-        ));
-        history.add(fromString(
-                "    B|" +
-                "   BW|" +
-                "   WB|" +
-                "     |" +
+                "    W|" +
                 "     |"
         ));
         history.add(fromString(
@@ -146,7 +146,7 @@ public class KoDecoratorMoveValidatorTest {
                 "     |"
         ));
 
-        boolean result = validator.followsRule(Color.WHITE, 3, 4, history);
+        boolean result = validator.followsRule(Color.WHITE, 1, 4, history);
 
         assertEquals(true, result);
     }
@@ -163,13 +163,6 @@ public class KoDecoratorMoveValidatorTest {
         history.add(fromString(
                 "    B|" +
                 "   B |" +
-                "   WB|" +
-                "    W|" +
-                "     |"
-        ));
-        history.add(fromString(
-                "    B|" +
-                "   BW|" +
                 "   WB|" +
                 "    W|" +
                 "     |"
