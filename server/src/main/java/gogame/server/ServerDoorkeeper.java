@@ -1,6 +1,8 @@
 package gogame.server;
 
 import gogame.common.*;
+import gogame.common.bot.BotMoveGenerator;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -79,6 +81,22 @@ public class ServerDoorkeeper extends Thread {
                     } catch (BoardFullException shouldNeverHappen) {
                         shouldNeverHappen.printStackTrace();
                     }
+                } else if (command.equals(CommunicationConstants.PLAY_WITH_BOT)) {
+                    int boardSize = scanner.nextInt();
+                    String roomName = "bot-" + getId();
+
+                    try {
+                        GameServer.getInstance().newBoard("bot-" + getId(), boardSize);
+                        NetMoveGenerator generator = new NetMoveGenerator(writer, reader);
+                        BotMoveGenerator bot = new BotMoveGenerator();
+                        GameServer.getInstance().addPlayerToBoard(generator, roomName);
+                        GameServer.getInstance().addPlayerToBoard(bot, roomName);
+                        writer.println(CommunicationConstants.JOINED + " " + generator.getBoard().getSize());
+                        generator.start();
+                    } catch (BoardExistsException | BoardFullException shouldNeverHappen) {
+                        shouldNeverHappen.printStackTrace();
+                    }
+
                 } else if (inputLine.equals(CommunicationConstants.BYE)) {
                     break;
                 }

@@ -1,5 +1,6 @@
 package gogame.common;
 
+import gogame.common.bot.BotMoveGenerator;
 import gogame.common.validation.DecoratorMoveValidatorFactory;
 import gogame.common.validation.MoveValidator;
 
@@ -71,8 +72,8 @@ public class Board implements MovePerformer {
                 }
 
                 history.add(after);
-                opponent(color).yourTurnBegan();
                 currentPlayer = opponent(color);
+                opponent(color).yourTurnBegan();
             }
 
             player(color).yourMoveValidated(validMove);
@@ -82,9 +83,9 @@ public class Board implements MovePerformer {
     @Override
     public void pass(Color color) {
         if (currentPlayer == player(color)) {
+            currentPlayer = opponent(color);
             opponent(color).passed(color);
             opponent(color).yourTurnBegan();
-            currentPlayer = opponent(color);
         }
     }
 
@@ -109,14 +110,17 @@ public class Board implements MovePerformer {
             black = generator;
 
             black.colorSet(Color.BLACK);
-            black.setMovePerformer(this);
         } else if (white == null) {
             white = generator;
 
             white.colorSet(Color.WHITE);
-            black.setMovePerformer(this);
-            black.yourTurnBegan();
+
+            if (generator instanceof BotMoveGenerator) {
+                ((BotMoveGenerator) generator).setHistory(history);
+            }
+
             currentPlayer = black;
+            black.yourTurnBegan();
         } else {
             throw new BoardFullException();
         }

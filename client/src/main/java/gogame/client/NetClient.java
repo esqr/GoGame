@@ -156,6 +156,10 @@ public class NetClient extends Thread implements MovePerformer {
         out.println(CommunicationConstants.NEW_BOARD + " " + name + " " + size);
     }
 
+    public void playWithBot(int size) {
+        out.println(CommunicationConstants.PLAY_WITH_BOT + " " + size);
+    }
+
     @Override
     public void placeStone(Color color, int x, int y) {
         out.println(CommunicationConstants.STONE_PLACED + " " + Integer.toString(x) + " " + Integer.toString(y));

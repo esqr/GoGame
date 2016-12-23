@@ -29,6 +29,7 @@
          <children>
             <TextField fx:id="newGameTextField" promptText="nazwa gry"/>
             <Button fx:id="newGameButton" text="Utwórz grę" />
+            <Button fx:id="playWithBotButton" text="Zagraj z botem" />
          </children>
       </VBox>
    </right>

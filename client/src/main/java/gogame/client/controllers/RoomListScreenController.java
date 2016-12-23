@@ -31,6 +31,9 @@ public class RoomListScreenController extends ControlledScreen {
     private Button newGameButton;
 
     @FXML
+    private Button playWithBotButton;
+
+    @FXML
     private TableColumn<RoomListElement, Integer> rtvSizeCol;
 
     @FXML
@@ -57,6 +60,10 @@ public class RoomListScreenController extends ControlledScreen {
             if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
                 netClient.joinBoard(roomTableView.getSelectionModel().getSelectedItem());
             }
+        });
+
+        playWithBotButton.setOnMouseClicked(event -> {
+            netClient.playWithBot(19);
         });
     }
 

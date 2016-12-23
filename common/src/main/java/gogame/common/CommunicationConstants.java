@@ -21,6 +21,7 @@ public final class CommunicationConstants {
     public static final String STONE_PLACED = "STONE";
     public static final String PASSED = PASS;
     public static final String OPPONENT_DISCONNECTED = "OPPONENT_DISCONNECTED";
+    public static final String PLAY_WITH_BOT = "PLAY_WITH_BOT";
 
     public final class Errors {
         // prevent instantiation
