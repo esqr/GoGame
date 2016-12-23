@@ -5,6 +5,9 @@ import gogame.common.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 public class NetMoveGenerator implements MoveGenerator {
@@ -42,6 +45,32 @@ public class NetMoveGenerator implements MoveGenerator {
                     running = false;
                     performer.surrender(color);
                     break;
+                } else if (command.equals(CommunicationConstants.SCORING)) {
+                    String proposed = scanner.next();
+
+                    if (proposed.equals(CommunicationConstants.Scoring.ACCEPT)) {
+                        performer.acceptScoring(color);
+                        continue;
+                    } else if (proposed.equals(CommunicationConstants.Scoring.REJECT)) {
+                        performer.rejectScoring(color);
+                        continue;
+                    }
+
+                    List<Stone> proposedScoring = new ArrayList<>();
+                    try {
+                        while (true) {
+                            int x = scanner.nextInt();
+                            int y = scanner.nextInt();
+
+                            proposedScoring.add(new Stone(x, y, null));
+                        }
+                    } catch (NoSuchElementException ignored) {}
+
+                    if (proposed.equals(CommunicationConstants.Scoring.ALIVE)) {
+                        performer.proposeAlive(proposedScoring);
+                    } else if (proposed.equals(CommunicationConstants.Scoring.DEAD)) {
+                        performer.proposeDead(proposedScoring);
+                    }
                 }
             }
         } catch (IOException e) {
@@ -82,18 +111,13 @@ public class NetMoveGenerator implements MoveGenerator {
     }
 
     @Override
-    public void scoringProposed(Scoring scoring) {
-
-    }
-
-    @Override
-    public void scoringAccepted(Scoring scoring) {
-
+    public void scoringAccepted() {
+        // todo
     }
 
     @Override
     public void scoringRejected() {
-
+        writer.println(CommunicationConstants.SCORING + " " + CommunicationConstants.Scoring.REJECTED);
     }
 
     @Override
@@ -111,6 +135,37 @@ public class NetMoveGenerator implements MoveGenerator {
     public void opponentSurrendered() {
         writer.println(CommunicationConstants.OPPONENT_SURRENDERED);
         running = false;
+    }
+
+    @Override
+    public void scoringStarted() {
+        writer.println(CommunicationConstants.SCORING + " " + CommunicationConstants.Scoring.STARTED);
+    }
+
+    @Override
+    public void aliveProposed(List<Stone> alive) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(CommunicationConstants.SCORING).append(" ")
+                .append(CommunicationConstants.Scoring.ALIVE);
+
+        for (Stone stone : alive) {
+            sb.append(" ").append(stone.getPosX()).append(" ").append(stone.getPosY());
+        }
+
+        writer.println(sb.toString());
+    }
+
+    @Override
+    public void deadProposed(List<Stone> dead) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(CommunicationConstants.SCORING).append(" ")
+                .append(CommunicationConstants.Scoring.DEAD);
+
+        for (Stone stone : dead) {
+            sb.append(" ").append(stone.getPosX()).append(" ").append(stone.getPosY());
+        }
+
+        writer.println(sb.toString());
     }
 
     public Board getBoard() {

@@ -1,9 +1,6 @@
 package gogame.common.bot;
 
-import gogame.common.Color;
-import gogame.common.MoveGenerator;
-import gogame.common.MovePerformer;
-import gogame.common.Scoring;
+import gogame.common.*;
 import gogame.common.validation.DecoratorMoveValidatorFactory;
 import gogame.common.validation.MoveValidator;
 
@@ -76,13 +73,7 @@ public class BotMoveGenerator implements MoveGenerator {
     }
 
     @Override
-    public void scoringProposed(Scoring scoring) {
-        // accept everything
-        performer.acceptScoring(scoring);
-    }
-
-    @Override
-    public void scoringAccepted(Scoring scoring) {
+    public void scoringAccepted() {
 
     }
 
@@ -104,6 +95,19 @@ public class BotMoveGenerator implements MoveGenerator {
     @Override
     public void opponentSurrendered() {
 
+    }
+
+    @Override
+    public void scoringStarted() {}
+
+    @Override
+    public void aliveProposed(List<Stone> alive) {
+        performer.acceptScoring(color);
+    }
+
+    @Override
+    public void deadProposed(List<Stone> dead) {
+        performer.acceptScoring(color);
     }
 
     public void setHistory(List<Color[][]> history) {

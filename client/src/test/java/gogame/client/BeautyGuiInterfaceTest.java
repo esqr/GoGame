@@ -55,22 +55,6 @@ public class BeautyGuiInterfaceTest {
     }
 
     @Test
-    public void scoringProposed() throws Exception {
-        Scoring scoring = mock(Scoring.class);
-
-        beautyGuiInterface.scoringProposed(scoring);
-        verify(forwardee, times(1)).scoringProposed(scoring);
-    }
-
-    @Test
-    public void scoringAccepted() throws Exception {
-        Scoring scoring = mock(Scoring.class);
-
-        beautyGuiInterface.scoringAccepted(scoring);
-        verify(forwardee, times(1)).scoringAccepted(scoring);
-    }
-
-    @Test
     public void scoringRejected() throws Exception {
         beautyGuiInterface.scoringRejected();
         verify(forwardee, times(1)).scoringRejected();

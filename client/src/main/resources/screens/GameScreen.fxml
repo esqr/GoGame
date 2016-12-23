@@ -18,6 +18,8 @@
             <children>
                 <Button fx:id="passButton" text="Pass" />
                 <Button fx:id="surrenderButton" text="Poddaj się" />
+                <Button fx:id="acceptScoringButton" disable="true" text="Akceptuj" />
+                <Button fx:id="rejectScoringButton" disable="true" text="Wznów grę" />
             </children>
         </VBox>
     </right>

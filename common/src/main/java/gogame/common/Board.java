@@ -5,6 +5,7 @@ import gogame.common.validation.DecoratorMoveValidatorFactory;
 import gogame.common.validation.MoveValidator;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Board implements MovePerformer {
@@ -15,6 +16,10 @@ public class Board implements MovePerformer {
     private int size;
     private Room room;
     private MoveValidator validator = DecoratorMoveValidatorFactory.create();
+    private Scoring scoring;
+    private boolean scoringMode = false;
+    private MoveGenerator scoringAccepted = null;
+    private boolean passState = false;
 
     public Board(int size) {
         this.size = size;
@@ -27,6 +32,12 @@ public class Board implements MovePerformer {
         }
 
         history.add(empty);
+
+        scoring = new Scoring();
+        scoring.alive = new Boolean[size][size];
+        for (Boolean[] row : scoring.alive) {
+            Arrays.fill(row, false);
+        }
     }
 
     private MoveGenerator player(Color color) {
@@ -47,7 +58,8 @@ public class Board implements MovePerformer {
 
     @Override
     public void placeStone(Color color, int x, int y) {
-        if (currentPlayer == player(color)) {
+        if (!scoringMode && currentPlayer == player(color)) {
+            passState = false;
             boolean validMove = validator.isMoveValid(color, x, y, history);
 
             if (validMove) {
@@ -82,26 +94,71 @@ public class Board implements MovePerformer {
 
     @Override
     public void pass(Color color) {
-        if (currentPlayer == player(color)) {
-            currentPlayer = opponent(color);
-            opponent(color).passed(color);
-            opponent(color).yourTurnBegan();
+        if (!scoringMode && currentPlayer == player(color)) {
+            if (passState) {
+                scoringMode = true;
+                passState = false;
+                opponent(color).scoringStarted();
+                player(color).scoringStarted();
+            } else {
+                passState = true;
+                currentPlayer = opponent(color);
+                opponent(color).passed(color);
+                opponent(color).yourTurnBegan();
+            }
         }
     }
 
     @Override
-    public void proposeScoring(Scoring scoring) {
-
-    }
-
-    @Override
-    public void acceptScoring(Scoring scoring) {
-
+    public void acceptScoring(Color color) {
+        if (scoringMode) {
+            if (scoringAccepted == opponent(color)) {
+                // both players accepted scoring
+                black.scoringAccepted();
+                white.scoringAccepted();
+            } else {
+                scoringAccepted = player(color);
+            }
+        }
     }
 
     @Override
     public void rejectScoring(Color color) {
+        if (scoringMode) {
+            scoringMode = false;
+            scoringAccepted = null;
+            currentPlayer = opponent(color);
+            currentPlayer.scoringRejected();
+            currentPlayer.yourTurnBegan();
+        }
+    }
 
+    @Override
+    public void proposeAlive(List<Stone> alive) {
+        if (scoringMode) {
+            scoringAccepted = null;
+
+            for (Stone stone : alive) {
+                scoring.alive[stone.getPosX()][stone.getPosY()] = true;
+            }
+
+            black.aliveProposed(alive);
+            white.aliveProposed(alive);
+        }
+    }
+
+    @Override
+    public void proposeDead(List<Stone> dead) {
+        if (scoringMode) {
+            scoringAccepted = null;
+
+            for (Stone stone : dead) {
+                scoring.alive[stone.getPosX()][stone.getPosY()] = false;
+            }
+
+            black.deadProposed(dead);
+            white.deadProposed(dead);
+        }
     }
 
     @Override

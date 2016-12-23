@@ -1,10 +1,9 @@
 package gogame.client;
 
-import gogame.common.Color;
-import gogame.common.MoveGenerator;
-import gogame.common.MovePerformer;
-import gogame.common.Scoring;
+import gogame.common.*;
 import gogame.common.collections.ObservableBoard;
+
+import java.util.List;
 
 public class BoardClient implements MovePerformer {
     private ObservableBoard board;
@@ -28,18 +27,27 @@ public class BoardClient implements MovePerformer {
     }
 
     @Override
-    public void proposeScoring(Scoring scoring) {
-        performer.proposeScoring(scoring);
-    }
-
-    @Override
-    public void acceptScoring(Scoring scoring) {
-        performer.acceptScoring(scoring);
+    public void acceptScoring(Color color) {
+        performer.acceptScoring(color);
     }
 
     @Override
     public void rejectScoring(Color color) {
         performer.rejectScoring(color);
+    }
+
+    @Override
+    public void proposeAlive(List<Stone> alive) {
+        if (alive.size() > 0 && alive.get(0).getColor() != Color.NONE) {
+            performer.proposeAlive(alive);
+        }
+    }
+
+    @Override
+    public void proposeDead(List<Stone> dead) {
+        if (dead.size() > 0 && dead.get(0).getColor() != Color.NONE) {
+            performer.proposeDead(dead);
+        }
     }
 
     @Override

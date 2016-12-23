@@ -50,22 +50,6 @@ public class BoardClientTest {
     }
 
     @Test
-    public void proposeScoring() throws Exception {
-        Scoring scoring = mock(Scoring.class);
-
-        boardClient.proposeScoring(scoring);
-        verify(performer, times(1)).proposeScoring(scoring);
-    }
-
-    @Test
-    public void acceptScoring() throws Exception {
-        Scoring scoring = mock(Scoring.class);
-
-        boardClient.acceptScoring(scoring);
-        verify(performer, times(1)).acceptScoring(scoring);
-    }
-
-    @Test
     public void rejectScoring(Color color) throws Exception {
         boardClient.rejectScoring(color);
         verify(performer, times(1)).rejectScoring(color);

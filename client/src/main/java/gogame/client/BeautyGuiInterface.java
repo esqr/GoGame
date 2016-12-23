@@ -2,6 +2,8 @@ package gogame.client;
 
 import gogame.common.*;
 
+import java.util.List;
+
 public class BeautyGuiInterface implements MoveGenerator {
     private MoveGenerator forwardee; // employer -> employee, forwarder -> forwardee?
 
@@ -31,13 +33,8 @@ public class BeautyGuiInterface implements MoveGenerator {
     }
 
     @Override
-    public void scoringProposed(Scoring scoring) {
-        forwardee.scoringProposed(scoring);
-    }
-
-    @Override
-    public void scoringAccepted(Scoring scoring) {
-        forwardee.scoringAccepted(scoring);
+    public void scoringAccepted() {
+        forwardee.scoringAccepted();
     }
 
     @Override
@@ -58,6 +55,21 @@ public class BeautyGuiInterface implements MoveGenerator {
     @Override
     public void opponentSurrendered() {
         forwardee.opponentSurrendered();
+    }
+
+    @Override
+    public void scoringStarted() {
+        forwardee.scoringStarted();
+    }
+
+    @Override
+    public void aliveProposed(List<Stone> alive) {
+        forwardee.aliveProposed(alive);
+    }
+
+    @Override
+    public void deadProposed(List<Stone> dead) {
+        forwardee.deadProposed(dead);
     }
 
     public void setForwardee(MoveGenerator forwardee) {

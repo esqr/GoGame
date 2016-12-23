@@ -49,4 +49,16 @@ public class Utils {
 
         return sameChain;
     }
+
+    public static List<Stone> getStoneChain(int startx, int starty, Color[][] state) {
+        List<int[]> chain = getChain(startx, starty, state);
+        List<Stone> stoneChain = new ArrayList<>();
+
+        for (int[] chainElement : chain) {
+            Stone stone = new Stone(chainElement[0], chainElement[1], state[chainElement[0]][chainElement[1]]);
+            stoneChain.add(stone);
+        }
+
+        return stoneChain;
+    }
 }

@@ -1,6 +1,7 @@
 package gogame.client.ui;
 
 import gogame.common.collections.ObservableBoard;
+import gogame.common.collections.ObservableScoring;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
@@ -10,10 +11,12 @@ import javafx.util.Pair;
 public class BoardView extends Canvas {
     private static final Color lineColor = Color.GRAY;
     private static final Color whitesColor = Color.WHITESMOKE;
+    private static final Color aliveColor = Color.LIMEGREEN;
     private static final Color blacksColor = Color.rgb(0x22, 0x22, 0x22);
     private static final double padding = 5.0;
 
     private ObservableBoard board;
+    private ObservableScoring scoring;
     private Pair<Integer, Integer> pointerPosition = null;
 
     private double marginV;
@@ -85,10 +88,20 @@ public class BoardView extends Canvas {
                     gogame.common.Color color = board.getStone(i, j);
                     if (color != gogame.common.Color.NONE) {
                         gc.setFill(color == gogame.common.Color.BLACK ? blacksColor : whitesColor);
+
+                        if (scoring.getAlive(i, j)) {
+                            gc.setLineWidth(4);
+                            gc.setStroke(aliveColor);
+                        }
+
                         gc.strokeOval(marginH + i * fieldSize - stoneRadius,
                                 marginV + j * fieldSize - stoneRadius, stoneRadius * 2, stoneRadius * 2);
                         gc.fillOval(marginH + i * fieldSize - stoneRadius,
                                 marginV + j * fieldSize - stoneRadius, stoneRadius * 2, stoneRadius * 2);
+
+
+                        gc.setLineWidth(1.5);
+                        gc.setStroke(lineColor);
                     }
                 }
             }
@@ -131,6 +144,13 @@ public class BoardView extends Canvas {
     public void setBoard(ObservableBoard board) {
         this.board = board;
         this.board.addObserver((o, arg) -> {
+            draw();
+        });
+    }
+
+    public void setScoring(ObservableScoring scoring) {
+        this.scoring = scoring;
+        this.scoring.addObserver((o, arg) -> {
             draw();
         });
     }

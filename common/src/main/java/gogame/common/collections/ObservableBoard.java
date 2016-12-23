@@ -38,4 +38,8 @@ public class ObservableBoard extends Observable {
     public Color getStone(int x, int y) {
         return stones[x][y];
     }
+
+    public Color[][] asArray() {
+        return stones;
+    }
 }

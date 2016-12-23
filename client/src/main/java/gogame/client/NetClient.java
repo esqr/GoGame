@@ -132,6 +132,34 @@ public class NetClient extends Thread implements MovePerformer {
                         requestBoardList();
                         StateManager.INSTANCE.setState(StateManager.ClientState.ROOM_VIEW);
                         break;
+
+                    case CommunicationConstants.SCORING:
+                        String proposed = scanner.next();
+                        if (proposed.equals(CommunicationConstants.Scoring.STARTED)) {
+                            generator.scoringStarted();
+                            break;
+                        } else if (proposed.equals(CommunicationConstants.Scoring.REJECTED)) {
+                            generator.scoringRejected();
+                            break;
+                        }
+
+                        List<Stone> proposedScoring = new ArrayList<>();
+                        try {
+                            while (true) {
+                                int x = scanner.nextInt();
+                                int y = scanner.nextInt();
+
+                                proposedScoring.add(new Stone(x, y, null));
+                            }
+                        } catch (NoSuchElementException ignored) {}
+
+                        if (proposed.equals(CommunicationConstants.Scoring.ALIVE)) {
+                            generator.aliveProposed(proposedScoring);
+                        } else if (proposed.equals(CommunicationConstants.Scoring.DEAD)) {
+                            generator.deadProposed(proposedScoring);
+                        }
+
+                        break;
                 }
             }
         } catch (Exception e) {
@@ -180,18 +208,39 @@ public class NetClient extends Thread implements MovePerformer {
     }
 
     @Override
-    public void proposeScoring(Scoring scoring) {
-
-    }
-
-    @Override
-    public void acceptScoring(Scoring scoring) {
-
+    public void acceptScoring(Color color) {
+        out.println(CommunicationConstants.SCORING + " " + CommunicationConstants.Scoring.ACCEPT);
     }
 
     @Override
     public void rejectScoring(Color color) {
+        out.println(CommunicationConstants.SCORING + " " + CommunicationConstants.Scoring.REJECT);
+    }
 
+    @Override
+    public void proposeAlive(List<Stone> alive) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(CommunicationConstants.SCORING).append(" ")
+                .append(CommunicationConstants.Scoring.ALIVE);
+
+        for (Stone stone : alive) {
+            sb.append(" ").append(stone.getPosX()).append(" ").append(stone.getPosY());
+        }
+
+        out.println(sb.toString());
+    }
+
+    @Override
+    public void proposeDead(List<Stone> dead) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(CommunicationConstants.SCORING).append(" ")
+                .append(CommunicationConstants.Scoring.DEAD);
+
+        for (Stone stone : dead) {
+            sb.append(" ").append(stone.getPosX()).append(" ").append(stone.getPosY());
+        }
+
+        out.println(sb.toString());
     }
 
     @Override
