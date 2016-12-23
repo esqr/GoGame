@@ -40,8 +40,6 @@ public class BotMoveGeneratorTest {
 
     @Test
     public void yourTurnBegan() throws Exception {
-        generator.yourTurnBegan();
-
         final int[] i = {0};
 
         Answer incrementCounter = new Answer() {
@@ -53,8 +51,12 @@ public class BotMoveGeneratorTest {
         };
 
         doAnswer(incrementCounter).when(performer).placeStone(eq(Color.BLACK), anyInt(), anyInt());
+        doAnswer(incrementCounter).when(performer).pass(eq(Color.BLACK));
 
-        assertTrue(i[0] == 0);
+        generator.yourTurnBegan();
+
+        verify(performer, times(1));
+        assertTrue(i[0] == 1);
     }
 
     @Test
@@ -67,7 +69,7 @@ public class BotMoveGeneratorTest {
 
         generator.yourTurnBegan();
 
-        verify(performer, atLeastOnce()).pass(Color.BLACK);
+        verify(performer, times(1)).pass(Color.BLACK);
     }
 
     @Test
