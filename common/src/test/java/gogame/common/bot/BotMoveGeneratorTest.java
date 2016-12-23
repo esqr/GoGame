@@ -55,7 +55,6 @@ public class BotMoveGeneratorTest {
 
         generator.yourTurnBegan();
 
-        verify(performer, times(1));
         assertTrue(i[0] == 1);
     }
 
