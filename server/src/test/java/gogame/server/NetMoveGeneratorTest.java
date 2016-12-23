@@ -3,11 +3,16 @@ package gogame.server;
 import gogame.common.Board;
 import gogame.common.Color;
 import gogame.common.CommunicationConstants;
+import gogame.common.Stone;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentMatcher;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -32,8 +37,8 @@ public class NetMoveGeneratorTest {
         netMoveGenerator.setMovePerformer(movePerformer);
     }
 
-    @Test
-    public void testCommands() throws Exception {
+    @Test(timeout = 5000)
+    public void byeCommand() throws Exception {
         Thread thread = new Thread() {
             @Override
             public void run() {
@@ -42,16 +47,168 @@ public class NetMoveGeneratorTest {
         };
         thread.start();
 
-        pos.write((CommunicationConstants.STONE_PLACED + " 1 1\n").getBytes());
-        pos.write((CommunicationConstants.PASS + "\n").getBytes());
         pos.write((CommunicationConstants.BYE + "\n").getBytes());
-
         thread.join();
-
-        verify(movePerformer, times(1)).placeStone(null, 1, 1);
-        verify(movePerformer, times(1)).pass(null);
         verify(movePerformer, times(1)).clientDisconnected(null);
     }
+
+    @Test(timeout = 5000)
+    public void stonePlacedCommand() throws Exception {
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                netMoveGenerator.start();
+            }
+        };
+        thread.start();
+
+        pos.write((CommunicationConstants.STONE_PLACED + " 1 2\n").getBytes());
+        pos.write((CommunicationConstants.BYE + "\n").getBytes());
+        thread.join();
+        verify(movePerformer, times(1)).placeStone(null, 1, 2);
+    }
+
+    @Test(timeout = 5000)
+    public void passCommand() throws Exception {
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                netMoveGenerator.start();
+            }
+        };
+        thread.start();
+
+        pos.write((CommunicationConstants.PASS + "\n").getBytes());
+        pos.write((CommunicationConstants.BYE + "\n").getBytes());
+        thread.join();
+
+        verify(movePerformer, times(1)).pass(null);
+    }
+
+    @Test(timeout = 5000)
+    public void surrenderCommand() throws Exception {
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                netMoveGenerator.start();
+            }
+        };
+        thread.start();
+
+        pos.write((CommunicationConstants.SURRENDER + "\n").getBytes());
+        thread.join();
+
+        verify(movePerformer, times(1)).surrender(null);
+    }
+
+    @Test(timeout = 5000)
+    public void scoringAcceptCommand() throws Exception {
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                netMoveGenerator.start();
+            }
+        };
+        thread.start();
+
+        pos.write((CommunicationConstants.SCORING + " " + CommunicationConstants.Scoring.ACCEPT + "\n").getBytes());
+        pos.write((CommunicationConstants.BYE + "\n").getBytes());
+        thread.join();
+        verify(movePerformer, times(1)).acceptScoring(null);
+    }
+
+    @Test(timeout = 5000)
+    public void scoringRejectCommand() throws Exception {
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                netMoveGenerator.start();
+            }
+        };
+        thread.start();
+
+        pos.write((CommunicationConstants.SCORING + " " + CommunicationConstants.Scoring.REJECT + "\n").getBytes());
+        pos.write((CommunicationConstants.BYE + "\n").getBytes());
+        thread.join();
+        verify(movePerformer, times(1)).rejectScoring(null);
+    }
+
+    @Test(timeout = 5000)
+    public void scoringAliveCommand() throws Exception {
+        List<Stone> expectedStones = Arrays.asList(new Stone(1, 2, null), new Stone(3, 4, null));
+
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                netMoveGenerator.start();
+            }
+        };
+        thread.start();
+
+        pos.write((CommunicationConstants.SCORING + " " + CommunicationConstants.Scoring.ALIVE + " 1 2 3 4\n").getBytes());
+        pos.write((CommunicationConstants.BYE + "\n").getBytes());
+        thread.join();
+        verify(movePerformer, times(1)).proposeAlive(argThat(new ArgumentMatcher<List<Stone>>() {
+            @Override
+            public boolean matches(List<Stone> stones) {
+                for (int i = 0; i < stones.size(); i++) {
+                    if (stones.get(i).getColor() != expectedStones.get(i).getColor()) return false;
+                    if (stones.get(i).getPosY() != expectedStones.get(i).getPosY()) return false;
+                    if (stones.get(i).getPosX()!= expectedStones.get(i).getPosX()) return false;
+                }
+
+                return true;
+            }
+        }));
+    }
+
+    @Test(timeout = 5000)
+    public void scoringDeadCommand() throws Exception {
+        List<Stone> expectedStones = Arrays.asList(new Stone(1, 2, null), new Stone(3, 4, null));
+
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                netMoveGenerator.start();
+            }
+        };
+        thread.start();
+
+        pos.write((CommunicationConstants.SCORING + " " + CommunicationConstants.Scoring.DEAD + " 1 2 3 4\n").getBytes());
+        pos.write((CommunicationConstants.BYE + "\n").getBytes());
+        thread.join();
+        verify(movePerformer, times(1)).proposeDead(argThat(new ArgumentMatcher<List<Stone>>() {
+            @Override
+            public boolean matches(List<Stone> stones) {
+                for (int i = 0; i < stones.size(); i++) {
+                    if (stones.get(i).getColor() != expectedStones.get(i).getColor()) return false;
+                    if (stones.get(i).getPosY() != expectedStones.get(i).getPosY()) return false;
+                    if (stones.get(i).getPosX()!= expectedStones.get(i).getPosX()) return false;
+                }
+
+                return true;
+            }
+        }));
+    }
+
+    @Test(timeout = 5000)
+    public void testIOException() throws Exception {
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                netMoveGenerator.start();
+            }
+        };
+        thread.start();
+        is.close();
+        thread.join();
+
+        verify(movePerformer, times(1)).clientDisconnected(null);
+    }
+
+
+
+    // interface implementation tests
 
     @Test
     public void colorSet() throws Exception {
@@ -90,6 +247,19 @@ public class NetMoveGeneratorTest {
     }
 
     @Test
+    public void scoringAccepted() throws Exception {
+        netMoveGenerator.scoringAccepted();
+        // todo
+    }
+
+    @Test
+    public void scoringRejected() throws Exception {
+        netMoveGenerator.scoringRejected();
+        assertEquals(CommunicationConstants.SCORING + " " + CommunicationConstants.Scoring.REJECTED + "\n",
+                os.toString());
+    }
+
+    @Test
     public void opponentDisconnected() throws Exception {
         Thread thread = new Thread() {
             @Override
@@ -103,40 +273,64 @@ public class NetMoveGeneratorTest {
         thread.join();
         assertEquals(CommunicationConstants.OPPONENT_DISCONNECTED + "\n",
                 os.toString());
-        verify(movePerformer, times(1)).clientDisconnected(null);
+    }
+
+    @Test
+    public void opponentSurrendered() throws Exception {
+        netMoveGenerator.opponentSurrendered();
+        assertEquals(CommunicationConstants.OPPONENT_SURRENDERED + "\n",
+                os.toString());
+    }
+
+    @Test
+    public void scoringStarted() throws Exception {
+        netMoveGenerator.scoringStarted();
+        assertEquals(CommunicationConstants.SCORING + " " + CommunicationConstants.Scoring.STARTED + "\n",
+                os.toString());
+    }
+
+    @Test
+    public void aliveProposed() throws Exception {
+        List<Stone> stones = Arrays.asList(new Stone(1, 2, null), new Stone(3, 4, null));
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(CommunicationConstants.SCORING).append(" ")
+                .append(CommunicationConstants.Scoring.ALIVE);
+
+        for (Stone stone : stones) {
+            sb.append(" ").append(stone.getPosX()).append(" ").append(stone.getPosY());
+        }
+
+        sb.append("\n");
+
+        netMoveGenerator.aliveProposed(stones);
+
+        assertEquals(sb.toString(), os.toString());
+
+    }
+
+    @Test
+    public void deadProposed() throws Exception {
+        List<Stone> stones = Arrays.asList(new Stone(1, 2, null), new Stone(3, 4, null));
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(CommunicationConstants.SCORING).append(" ")
+                .append(CommunicationConstants.Scoring.DEAD);
+
+        for (Stone stone : stones) {
+            sb.append(" ").append(stone.getPosX()).append(" ").append(stone.getPosY());
+        }
+
+        sb.append("\n");
+
+        netMoveGenerator.deadProposed(stones);
+
+        assertEquals(sb.toString(), os.toString());
+
     }
 
     @Test
     public void getBoard() throws Exception {
         assertSame(movePerformer, netMoveGenerator.getBoard());
     }
-
-    /*
-    @Test(timeout = 2000)
-    public void testNetMoveGenerator() throws Exception {
-        Socket socket = mock(Socket.class);
-        PipedOutputStream pos = new PipedOutputStream();
-        PipedInputStream is = new PipedInputStream(pos);
-        ByteArrayOutputStream os = new ByteArrayOutputStream();
-        when(socket.getOutputStream()).thenReturn(os);
-        when(socket.getInputStream()).thenReturn(is);
-
-        NetMoveGenerator player = new NetMoveGenerator(socket);
-        assertEquals("HELLO\n", os.toString());
-        assertTrue(player.isAlive());
-        pos.write("BYE\n".getBytes());
-        player.join();
-        assertFalse(player.isAlive());
-    }
-
-    @Test
-    public void testBadSocket() throws Exception {
-        Socket socket = mock(Socket.class);
-        when(socket.getOutputStream()).thenThrow(new IOException());
-        when(socket.getInputStream()).thenThrow(new IOException());
-
-        NetMoveGenerator player = new NetMoveGenerator(socket);
-        assertFalse(player.isAlive());
-    }
-    */
 }
