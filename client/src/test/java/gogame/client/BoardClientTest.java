@@ -50,9 +50,9 @@ public class BoardClientTest {
     }
 
     @Test
-    public void rejectScoring(Color color) throws Exception {
-        boardClient.rejectScoring(color);
-        verify(performer, times(1)).rejectScoring(color);
+    public void rejectScoring() throws Exception {
+        boardClient.rejectScoring(Color.BLACK);
+        verify(performer, times(1)).rejectScoring(Color.BLACK);
     }
 
 }
