@@ -1,0 +1,11 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+GET     /                                gogame.webapp.controllers.Application.index()
+GET     /game                       gogame.webapp.controllers.Application.game()
+GET     /assets/javascripts/chatroom.js  gogame.webapp.controllers.Application.gameChooseScreen()
+
+# Map static resources from the /public folder to the /assets URL path
+# GET     /assets/*file                    gogame.webapp.controllers.Assets.at(path="/public", file)

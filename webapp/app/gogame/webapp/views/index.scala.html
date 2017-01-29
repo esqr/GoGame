@@ -1,0 +1,21 @@
+
+@main() {
+
+    @if(flash.containsKey("error")) {
+
+        <div class="alert-message error">
+            <p>
+                <strong>Oops!</strong> @flash.get("error")
+            </p>
+        </div>
+
+    }
+
+    <script src="@routes.Application.gameChooseScreen()"></script>
+    <div class="alert-message block-message info">
+        <p>
+            <strong>Websocket Play!</strong>
+        </p>
+    </div>
+
+}
