@@ -1,8 +1,7 @@
-@()
 $(function()
 {
-    var WS = window['MozWebSocket'] ? MozWebSocket : WebSocket
-    var socket = new WS("/game ")
+    var WS = window['MozWebSocket'] ? MozWebSocket : WebSocket;
+    var socket = new WS("ws://localhost:9000/game");
 
     var sendMessage = function(message)
     {
@@ -12,9 +11,15 @@ $(function()
         }))
     }
 
+    var sayHello = function()
+    {
+        sendMessage('HELLO');
+    }
+
     var receiveEvent = function(event)
     {
         var data = JSON.parse(event.data);
+        console.log(data);
 
         if (data.error)
         {
@@ -23,8 +28,11 @@ $(function()
             $("#onError").show();
             return;
         }
+        else if (data.message == "HELLO")
+        {
+            sendMessage('GET_BOARDS ALL');
+        }
 
-        console.log(data);
 //         $("#onChat").show()
 //         var el = $('<div class="message"><p style="font-size:16px"></p></div>')
 //         $("p", el).text(data.message)
@@ -33,7 +41,5 @@ $(function()
     }
 
     socket.onmessage = receiveEvent;
-    socket.send(JSON.stringify( {
-        message: $("#nr").val()
-    }));
+    socket.onopen = sayHello;
 })

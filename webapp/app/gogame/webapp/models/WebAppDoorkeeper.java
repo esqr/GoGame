@@ -30,9 +30,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class WebAppDoorkeeper extends UntypedActor {
+    private WebSocket.In<JsonNode> in;
     private WebSocket.Out<JsonNode> out;
 
-    public void WebAppDoorkeeper(WebSocket.In<JsonNode> in, WebSocket.Out<JsonNode> out) {
+    public WebAppDoorkeeper(WebSocket.In<JsonNode> in, WebSocket.Out<JsonNode> out) {
+        this.in = in;
         this.out = out;
 
         in.onMessage(new Callback<JsonNode>() {
